@@ -1,12 +1,11 @@
 """
 RAG 기반 QA 체인.
 검색된 근거(초록)의 유사도가 임계값보다 낮으면 LLM을 호출하지 않고 즉시
-"확인 불가"로 응답하는 Grounding Guard를 코드 레벨에서 강제합니다.
-(SKALA HelpDesk AI 프로젝트의 GroundingGuard / PubMed 검색 실패 시 404 처리와 동일한 설계 원칙)
+"확인 불가"로 응답하는 Grounding Guard를 코드 레벨에서 강제한다.
 
 사전 준비:
-    pip install langchain-openai --break-system-packages
-    export OPENAI_API_KEY="sk-..."
+    pip install langchain-google-genai --break-system-packages
+    export GOOGLE_API_KEY="..."   # Google AI Studio에서 무료로 발급 (https://aistudio.google.com/apikey)
 
 사용법:
     python qa_chain.py
@@ -14,7 +13,7 @@ RAG 기반 QA 체인.
 import os
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 
 PERSIST_DIR = "./chroma_db"
@@ -23,6 +22,11 @@ TOP_K = 5
 # similarity_search_with_relevance_score는 0~1 값을 반환(클수록 유사).
 # 실제 데이터로 몇 번 질의해보고 이 값을 조정하세요.
 SCORE_THRESHOLD = 0.35
+
+# 무료 티어(Google AI Studio) 모델. gemini-2.5-flash-lite는 신규 사용자에게 더 이상
+# 제공되지 않아(2026-08 기준) gemini-3.5-flash-lite로 교체함. 모델명이 또 바뀌었다면
+# https://aistudio.google.com/ 에서 현재 사용 가능한 -flash-lite 계열 모델명을 확인하세요.
+GEN_MODEL = "gemini-3.5-flash-lite"
 
 PROMPT = ChatPromptTemplate.from_template(
     """당신은 암 유전체/전사체 연구 도메인 전문 어시스턴트입니다.
@@ -75,7 +79,7 @@ def answer_question(question, llm, vectorstore):
 
 
 def main():
-    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    llm = ChatGoogleGenerativeAI(model=GEN_MODEL, temperature=0)
     vectorstore = get_vectorstore()
 
     print("종료하려면 'exit' 입력\n")

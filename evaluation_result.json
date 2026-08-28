@@ -1,5 +1,5 @@
 {
-  "hit_rate": 0.8571428571428571,
+  "hit_rate": 0.7857142857142857,
   "cases": [
     {
       "id": "q-001",
@@ -14,7 +14,14 @@
         "38805901",
         "38872157"
       ],
-      "hit": false
+      "hit": false,
+      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
+      "grounded": false,
+      "llm_judge": {
+        "faithfulness": null,
+        "relevance": null,
+        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+      }
     },
     {
       "id": "q-002",
@@ -29,7 +36,14 @@
         "37046096",
         "38926732"
       ],
-      "hit": true
+      "hit": true,
+      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
+      "grounded": false,
+      "llm_judge": {
+        "faithfulness": null,
+        "relevance": null,
+        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+      }
     },
     {
       "id": "q-003",
@@ -44,7 +58,14 @@
         "40883713",
         "30637712"
       ],
-      "hit": true
+      "hit": true,
+      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
+      "grounded": false,
+      "llm_judge": {
+        "faithfulness": null,
+        "relevance": null,
+        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+      }
     },
     {
       "id": "q-004",
@@ -59,7 +80,22 @@
         "40140821",
         "40691458"
       ],
-      "hit": true
+      "hit": true,
+      "generated_answer": [
+        {
+          "type": "text",
+          "text": "제공된 논문 초록에 따르면, 삼중음성 유방암(TNBC) 환자를 대상으로 한 anthracycline 비포함 선행화학면역요법(carboplatin + docetaxel + pembrolizumab, NeoPACT 임상시험)의 병리학적 완전관해율(pCR)은 58% (95% CI, 48%-67%)였습니다 (PMID: 37991778).",
+          "extras": {
+            "signature": "El4KXAERTTIPL8uGzNV0R+uL5HO+1UGvEuAsswCOG9LhGcsUBByUkXSSx3+vV7A66gKUlhuurAKvt3GXeHUZc37TqDK+tfdU1qiKqmq8DETd5793wAW7gvcYjqIRvYMP"
+          }
+        }
+      ],
+      "grounded": true,
+      "llm_judge": {
+        "faithfulness": 5,
+        "relevance": 5,
+        "reasoning": "답변은 근거 초록(PMID: 37991778)에 명시된 NeoPACT 임상시험의 carboplatin+docetaxel+pembrolizumab 요법에 대한 pCR 58% 수치를 정확하게 인용하여 질문에 완벽히 부합하는 답변을 제공했습니다."
+      }
     },
     {
       "id": "q-005",
@@ -74,7 +110,14 @@
         "40025324",
         "39419289"
       ],
-      "hit": false
+      "hit": false,
+      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
+      "grounded": false,
+      "llm_judge": {
+        "faithfulness": null,
+        "relevance": null,
+        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+      }
     },
     {
       "id": "q-006",
@@ -89,7 +132,14 @@
         "39225608",
         "37782377"
       ],
-      "hit": true
+      "hit": true,
+      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
+      "grounded": false,
+      "llm_judge": {
+        "faithfulness": null,
+        "relevance": null,
+        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+      }
     },
     {
       "id": "q-007",
@@ -104,7 +154,14 @@
         "40945432",
         "40131473"
       ],
-      "hit": true
+      "hit": true,
+      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
+      "grounded": false,
+      "llm_judge": {
+        "faithfulness": null,
+        "relevance": null,
+        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+      }
     },
     {
       "id": "q-008",
@@ -119,7 +176,14 @@
         "39026663",
         "25582278"
       ],
-      "hit": true
+      "hit": true,
+      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
+      "grounded": false,
+      "llm_judge": {
+        "faithfulness": null,
+        "relevance": null,
+        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+      }
     },
     {
       "id": "q-009",
@@ -134,7 +198,22 @@
         "40799650",
         "40247837"
       ],
-      "hit": true
+      "hit": true,
+      "generated_answer": [
+        {
+          "type": "text",
+          "text": "제공된 논문 초록에 따르면, 치주염과 IgA 신병증(IgAN) 사이의 교차 유전자 분석에서 단일 샘플 GSEA(ssGSEA)를 통한 면역 침윤 분석 결과 **T 세포(T cells)**와 **B 세포(B cells)**가 pathogenesis(병인) 및 연관성에서 중요한 역할을 하는 것으로 확인되었습니다 (PMID: 36793719).",
+          "extras": {
+            "signature": "El4KXAERTTIPwgj7URQ0M6OY056hZR/rX3shRSL2p/Qwcu5LMRNcPfTUxdEoqK/SR+nlPoAWEPKtzLukRdpbeXkTJE94tcchq7ZyxmuIUJaCpnXNCYH9mnHUmy4AS6iT"
+          }
+        }
+      ],
+      "grounded": true,
+      "llm_judge": {
+        "faithfulness": 5,
+        "relevance": 5,
+        "reasoning": "답변은 제공된 근거 초록(PMID: 36793719)을 바탕으로 치주염과 IgA 신병증의 ssGSEA 분석에서 확인된 면역세포인 T 세포와 B 세포를 정확하고 충실하게 답변하고 있습니다."
+      }
     },
     {
       "id": "q-010",
@@ -149,7 +228,14 @@
         "37029373",
         "40131473"
       ],
-      "hit": true
+      "hit": true,
+      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
+      "grounded": false,
+      "llm_judge": {
+        "faithfulness": null,
+        "relevance": null,
+        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+      }
     },
     {
       "id": "q-011",
@@ -164,7 +250,14 @@
         "38070154",
         "40140821"
       ],
-      "hit": true
+      "hit": true,
+      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
+      "grounded": false,
+      "llm_judge": {
+        "faithfulness": null,
+        "relevance": null,
+        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+      }
     },
     {
       "id": "q-012",
@@ -179,7 +272,14 @@
         "40621753",
         "40763838"
       ],
-      "hit": true
+      "hit": true,
+      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
+      "grounded": false,
+      "llm_judge": {
+        "faithfulness": null,
+        "relevance": null,
+        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+      }
     },
     {
       "id": "q-013",
@@ -194,7 +294,14 @@
         "40799650",
         "37455369"
       ],
-      "hit": true
+      "hit": true,
+      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
+      "grounded": false,
+      "llm_judge": {
+        "faithfulness": null,
+        "relevance": null,
+        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+      }
     },
     {
       "id": "q-014",
@@ -206,10 +313,23 @@
         "37605791",
         "40629293",
         "39308141",
-        "40596265",
-        "40696453"
+        "38509072",
+        "40596265"
       ],
-      "hit": true
+      "hit": false,
+      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
+      "grounded": false,
+      "llm_judge": {
+        "faithfulness": null,
+        "relevance": null,
+        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+      }
     }
-  ]
+  ],
+  "llm_judge_summary": {
+    "avg_faithfulness": 5.0,
+    "avg_relevance": 5.0,
+    "n_judged": 2,
+    "n_total": 14
+  }
 }

@@ -18,14 +18,18 @@ PubMed E-utilities API (fetch_pubmed.py)
 RAG QA + Grounding Guard (qa_chain.py)
         │
         ▼
-Golden Set 기반 자동 평가 (evaluate.py)
+Golden Set 기반 자동 평가 + LLM-as-a-Judge (evaluate.py)
 ```
+
+**LLM**: 답변 생성과 채점 모두 Google Gemini API(`gemini-3.5-flash-lite`, Google AI Studio 무료 티어)를
+사용합니다.
 
 ## 실행 결과
 
 - **수집 데이터**: PubMed 초록 240건 (EGFR 변이 폐선암 예후 / TNBC 항암화학요법 반응 /
   ssGSEA pathway enrichment / 세포주-환자 전이학습 약물반응, 각 60건)
-- **Golden Set**: **N=14**
+- **Golden Set**: 개인 학습 프로젝트 규모로 정직하게 라벨링 — **N=14**
+  (SKALA 팀 프로젝트의 20개 케이스와는 별개 규모)
 - **Retrieval Hit Rate: 85.7% (12/14)**
   - 1차 실행 78.6%(11/14) → 검색 범위와 겹치는 일반적인 리뷰 논문 문항 1개를
     더 구체적인 사례로 교체 후 85.7%로 개선
@@ -46,10 +50,10 @@ python fetch_pubmed.py
 python build_index.py
 
 # 3. 대화형으로 질의응답 테스트
-export OPENAI_API_KEY="..."
+export GOOGLE_API_KEY="..."   # Google AI Studio 발급 (https://aistudio.google.com/apikey)
 python qa_chain.py
 
-# 4. Golden Set 작성 후 자동 평가
+# 4. Golden Set 작성 후 자동 평가 (+ GOOGLE_API_KEY가 있으면 LLM-as-a-Judge까지 실행)
 cp golden_set_template.json golden_set.json
 # golden_set.json을 열어 본인 도메인 지식으로 질문/정답 PMID를 채워넣기
 python evaluate.py
@@ -58,7 +62,12 @@ python evaluate.py
 ## 설계 원칙
 
 - **Grounding Guard**: 검색된 근거의 유사도가 임계값(`SCORE_THRESHOLD`)보다 낮으면
-  LLM 호출 자체를 생략하고 즉시 "확인 불가"를 반환하며, 프롬프트 지시만으로 환각을
+  LLM 호출 자체를 생략하고 즉시 "확인 불가"를 반환합니다. 프롬프트 지시만으로 환각을
   막는 대신, 코드 레벨에서 결정론적으로 차단합니다.
-- **Golden Set 평가**: 직접 작성한 질문-정답 PMID 세트로
-  retrieval hit rate를 자동 측정하여 정량적 지표로 검증합니다.
+- **Golden Set 평가**: 도메인 전문가(본인)가 직접 작성한 질문-정답 PMID 세트로
+  retrieval hit rate를 자동 측정하여, 정성적 인상이 아닌 정량적 지표로 검증합니다.
+- **LLM-as-a-Judge**: golden set 질문마다 정답 텍스트를 별도로 작성하는 대신(reference-free),
+  실제 생성된 답변을 채점 LLM이 근거 초록 기준으로 Faithfulness(환각 여부)·Relevance(질문
+  적합성) 두 축으로 1~5점 채점합니다. Grounding Guard가 답변을 차단한 케이스는 채점하지 않고
+  "차단됨"으로 표시되어, 이 실행이 Grounding Guard 동작 검증도 겸합니다.
+
