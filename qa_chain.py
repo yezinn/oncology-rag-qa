@@ -5,8 +5,8 @@ RAG 기반 QA 체인.
 
 사전 준비:
     pip install langchain-google-genai --break-system-packages
-    export GOOGLE_API_KEY="..."   # Google AI Studio에서 무료로 발급 (https://aistudio.google.com/apikey)
-
+    export GOOGLE_API_KEY="..."
+    
 사용법:
     python qa_chain.py
 """

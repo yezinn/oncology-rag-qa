@@ -1,8 +1,8 @@
 """
 SCORE_THRESHOLD 튜닝용 진단 스크립트.
 golden_set.json의 각 질문에 대해 top-1 유사도 점수와, 정답 PMID가 top-k 안에
-실제로 들어왔는지(hit)를 함께 출력합니다. API 키 없이(로컬 임베딩만 사용) 바로
-실행 가능합니다 — threshold를 정하기 위해 LLM 호출은 필요 없습니다.
+실제로 들어왔는지(hit)를 함께 출력한다.
+API 키 없이 바로 실행 가능 (로컬 임베딩만 사용)
 
 사용법:
     python3 check_scores.py

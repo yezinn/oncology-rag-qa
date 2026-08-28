@@ -1,5 +1,5 @@
 """
-Golden Set 기반 평가 스크립트.
+Golden Set 기반 평가 스크립트
 
 1) Retrieval Hit Rate: 기대 PMID가 실제로 검색되었는지 자동 측정 (기존 로직, 변경 없음)
 2) LLM-as-a-Judge: qa_chain.py로 실제 답변을 생성시킨 뒤, 별도의 LLM 채점자가
@@ -10,9 +10,9 @@ Golden Set 기반 평가 스크립트.
 
 사전 준비:
     golden_set_template.json을 복사해 golden_set.json으로 만들고, 본인 지식으로
-    질문과 정답 PMID를 채워넣으세요 (최소 10~15개 권장).
+    질문과 정답 PMID를 채워넣는다(최소 10~15개 권장).
     LLM-as-a-Judge까지 실행하려면: export GOOGLE_API_KEY="..."
-    (Google AI Studio에서 카드 등록 없이 무료 발급: https://aistudio.google.com/apikey)
+    (Google AI Studio 발급: https://aistudio.google.com/apikey)
 
 사용법:
     python evaluate.py

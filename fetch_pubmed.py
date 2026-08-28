@@ -1,6 +1,6 @@
 """
 PubMed 초록 수집 스크립트
-EGFR 변이 폐선암, TNBC 항암화학요법 반응, ssGSEA 등 연구 도메인 관련 논문 초록을 수집합니다.
+EGFR 변이 폐선암, TNBC 항암화학요법 반응, ssGSEA 등 연구 도메인 관련 논문 초록을 수집한다.
 
 사전 준비:
     pip install biopython --break-system-packages
@@ -16,7 +16,6 @@ from Bio import Entrez
 
 Entrez.email = os.environ.get("ENTREZ_EMAIL", "your_email@example.com")
 
-# 본인 연구 도메인에 맞게 쿼리를 자유롭게 수정하세요.
 QUERIES = {
     "egfr_luad_prognosis": "EGFR mutation lung adenocarcinoma prognosis biomarker",
     "tnbc_chemo_response": "triple negative breast cancer neoadjuvant chemotherapy response prediction",
