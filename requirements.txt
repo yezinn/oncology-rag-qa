@@ -1,0 +1,6 @@
+biopython
+langchain
+langchain-community
+langchain-openai
+chromadb
+sentence-transformers
