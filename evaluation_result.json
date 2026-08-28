@@ -15,12 +15,20 @@
         "38872157"
       ],
       "hit": false,
-      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
-      "grounded": false,
+      "generated_answer": [
+        {
+          "type": "text",
+          "text": "제공된 논문 초록들에는 EGFR 변이 폐선암(LUAD)이 야생형 대비 면역치료 반응이 낮은 이유를 단일세포 전사체 수준에서 분석한 내용이나, 종양미세환경(TME)에서 결핍된 핵심 세포에 대한 정보가 포함되어 있지 않습니다. 따라서 제공된 근거만을 바탕으로 해당 질문에 답변할 수 없습니다.",
+          "extras": {
+            "signature": "El4KXAERTTIPZ8LgpozelocQv/CIM3J/uXeJA1KLJMuZugpqkS4Yiee8DK1hKIh16x0VGcZstKXCTNe7bbU9WQ3v5iybY6ujuuqXKtqerIUwAofY/OHKwuzQJWsav8kR"
+          }
+        }
+      ],
+      "grounded": true,
       "llm_judge": {
-        "faithfulness": null,
-        "relevance": null,
-        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+        "faithfulness": 5,
+        "relevance": 5,
+        "reasoning": "제공된 근거 초록에는 질문에서 요구하는 단일세포 전사체 수준의 분석이나 TME에서 결핍된 핵심 세포에 대한 내용이 없으며, 답변은 이를 정확히 지적하여 근거 기반으로 훌륭하게 응답했습니다."
       }
     },
     {
@@ -33,16 +41,24 @@
         "30298562",
         "39353384",
         "39419289",
-        "37046096",
-        "38926732"
+        "38926732",
+        "37424492"
       ],
-      "hit": true,
-      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
-      "grounded": false,
+      "hit": false,
+      "generated_answer": [
+        {
+          "type": "text",
+          "text": "제공된 논문 초록에 따르면, TRACERx 코호트(421명, NSCLC) 및 서브클론성 전장유전체 배가(subclonal WGD)에 대한 내용은 포함되어 있지 않습니다. 따라서 제공된 초록만을 근거로는 답변을 작성할 수 없습니다.",
+          "extras": {
+            "signature": "El4KXAERTTIP/z2S/0g8eUO2v9XqpP0+WkXOdFldJxrAfnSazwc8xAE4CqwygPFsZGZQ3QQqG/wT5Yz1fqMoqRSDAWjlcsXGARsUeNRg9ZLQU/nJZg1Xya27juvsInrM"
+          }
+        }
+      ],
+      "grounded": true,
       "llm_judge": {
-        "faithfulness": null,
-        "relevance": null,
-        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+        "faithfulness": 5,
+        "relevance": 5,
+        "reasoning": "제공된 근거 초록들에는 질문에서 언급된 TRACERx 코호트나 서브클론성 전장유전체 배가(subclonal WGD)에 대한 내용이 전혀 없으므로, 초록에 정보가 없음을 올바르게 지적하고 답변할 수 없다고 한 시스템의 판단은 매우 충실하고 적절합니다."
       }
     },
     {
@@ -59,12 +75,20 @@
         "30637712"
       ],
       "hit": true,
-      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
-      "grounded": false,
+      "generated_answer": [
+        {
+          "type": "text",
+          "text": "제공된 논문 초록에 따르면, EGFR 변이 비소세포폐암(NSCLC)이 소세포폐암(SCLC)으로 형질전환되는 데 걸리는 중앙값 시간은 17.8개월이며 (PMID: 30550363), 형질전환 이후 자주 동반되는 유전자 변이는 TP53, Rb1, PIK3CA입니다 (PMID: 30550363).",
+          "extras": {
+            "signature": "El4KXAERTTIP+lwKAf1ZGaWFbF8aydxwlfdjMJHEHbwjY/+jV9ZU7+eAMtsSF7COQnXQ9iuMDjPEKhjQgRTdSuniKPzCsfUFHmOttL0GDDXsMkzwKkO56KxexcLmi2Gd"
+          }
+        }
+      ],
+      "grounded": true,
       "llm_judge": {
-        "faithfulness": null,
-        "relevance": null,
-        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+        "faithfulness": 5,
+        "relevance": 5,
+        "reasoning": "답변은 질문에서 요구한 SCLC로의 형질전환 중앙값 시간과 동반 유전자 변이를 근거 초록에 기반하여 정확하고 충실하게 답변하고 있습니다."
       }
     },
     {
@@ -84,9 +108,9 @@
       "generated_answer": [
         {
           "type": "text",
-          "text": "제공된 논문 초록에 따르면, 삼중음성 유방암(TNBC) 환자를 대상으로 한 anthracycline 비포함 선행화학면역요법(carboplatin + docetaxel + pembrolizumab, NeoPACT 임상시험)의 병리학적 완전관해율(pCR)은 58% (95% CI, 48%-67%)였습니다 (PMID: 37991778).",
+          "text": "제공된 논문 초록에 따르면, TNBC에서 anthracycline을 배제한 carboplatin과 docetaxel plus pembrolizumab 선행요법(NeoPACT 임상시험)의 병리학적 완전관해율(pCR)은 58% (95% CI, 48%-67%)였습니다 (PMID: 37991778).",
           "extras": {
-            "signature": "El4KXAERTTIPL8uGzNV0R+uL5HO+1UGvEuAsswCOG9LhGcsUBByUkXSSx3+vV7A66gKUlhuurAKvt3GXeHUZc37TqDK+tfdU1qiKqmq8DETd5793wAW7gvcYjqIRvYMP"
+            "signature": "El4KXAERTTIP+N8G/Rm9t1Dnez9pE/tpyBZoU34kC4/HpweyxIH12iU7RfI2ltQtwEuDj2gDNepO6bEod+JsDanRWYhVUs2pZIwDAxEsbJK7Gt/25wGsqiSHlj0Y/4GL"
           }
         }
       ],
@@ -94,7 +118,7 @@
       "llm_judge": {
         "faithfulness": 5,
         "relevance": 5,
-        "reasoning": "답변은 근거 초록(PMID: 37991778)에 명시된 NeoPACT 임상시험의 carboplatin+docetaxel+pembrolizumab 요법에 대한 pCR 58% 수치를 정확하게 인용하여 질문에 완벽히 부합하는 답변을 제공했습니다."
+        "reasoning": "제공된 근거 초록(PMID: 37991778)에 명시된 NeoPACT 임상시험의 pCR 수치(58%)를 정확하게 인용하여 질문에 완벽히 답변함."
       }
     },
     {
@@ -133,12 +157,20 @@
         "37782377"
       ],
       "hit": true,
-      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
-      "grounded": false,
+      "generated_answer": [
+        {
+          "type": "text",
+          "text": "제공된 논문 초록에 따르면, 삼중음성 유방암(TNBC) 환자에서 병리학적 완전관해(pCR) 그룹은 비관해(non-pCR) 그룹에 비해 종양 내 미생물총의 **다양성이 더 컸고 부하량도 더 높았습니다** (PMID: 40280564). 또한, 종양 내 미생물총의 부하량은 CD4+CXCL13+ T 세포 침윤과는 양의 상관관계를 보였고, CD68+SPP1+ 대식세포 침윤과는 음의 상관관계를 보였습니다 (PMID: 40280564).",
+          "extras": {
+            "signature": "El4KXAERTTIPwCZY9rWX2H37MGhX/T/uNUBy2MChUub+Q8J1vP47e/hlhaViGeYfl+QHpMgQd/7IH/U6b6As93CmkOjMJh0MPVjJQHA34JT2H01UtzUeYPlpturvf0nu"
+          }
+        }
+      ],
+      "grounded": true,
       "llm_judge": {
-        "faithfulness": null,
-        "relevance": null,
-        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+        "faithfulness": 5,
+        "relevance": 5,
+        "reasoning": "답변은 제공된 근거 초록(PMID: 40280564)의 내용만을 정확하게 활용하여 TNBC 환자에서 종양 내 미생물총의 다양성 및 부하량과 pCR 여부와의 관계를 충실하고 명확하게 답변하였습니다."
       }
     },
     {
@@ -155,12 +187,20 @@
         "40131473"
       ],
       "hit": true,
-      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
-      "grounded": false,
+      "generated_answer": [
+        {
+          "type": "text",
+          "text": "제공된 논문 초록에 따르면, I-SPY2 임상시험에서 선행항암화학요법(NAC) 시작 3주 후 ctDNA의 조기 소실이 유리한 치료 반응을 예측한 것은 삼중음성 유방암(triple-negative breast cancer, TNBC) 아형에서만 해당됩니다 (PMID: 37146605).",
+          "extras": {
+            "signature": "El4KXAERTTIPiLRs0FMEm+QiiVobdXoa8gip5ATe08kw3o9BvvvCEgLDeBgFQxVEzWjHF0Jlg4MHIMaYlr8ehWn+e71+zs82HGhBkcO8w0E/ktNt5XmN5lEmpeVKK1gs"
+          }
+        }
+      ],
+      "grounded": true,
       "llm_judge": {
-        "faithfulness": null,
-        "relevance": null,
-        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+        "faithfulness": 5,
+        "relevance": 5,
+        "reasoning": "답변은 근거 초록(PMID: 37146605)의 내용을 바탕으로 I-SPY2 임상시험에서 NAC 시작 3주 후 ctDNA 조기 소실이 삼중음성 유방암(TNBC) 아형에서만 치료 반응을 예측한다고 정확하게 답변하였습니다."
       }
     },
     {
@@ -202,9 +242,9 @@
       "generated_answer": [
         {
           "type": "text",
-          "text": "제공된 논문 초록에 따르면, 치주염과 IgA 신병증(IgAN) 사이의 교차 유전자 분석에서 단일 샘플 GSEA(ssGSEA)를 통한 면역 침윤 분석 결과 **T 세포(T cells)**와 **B 세포(B cells)**가 pathogenesis(병인) 및 연관성에서 중요한 역할을 하는 것으로 확인되었습니다 (PMID: 36793719).",
+          "text": "제공된 논문 초록에 따르면, 치주염(periodontitis)과 IgA 신병증(IgAN) 사이의 ssGSEA 분석 결과 발현 프로파일에서 침윤 수준이 분석되고 주요 교차 허브 유전자와 연관성이 확인된 면역세포는 **T 세포(T cells)와 B 세포(B cells)**입니다 (PMID: 36793719).",
           "extras": {
-            "signature": "El4KXAERTTIPwgj7URQ0M6OY056hZR/rX3shRSL2p/Qwcu5LMRNcPfTUxdEoqK/SR+nlPoAWEPKtzLukRdpbeXkTJE94tcchq7ZyxmuIUJaCpnXNCYH9mnHUmy4AS6iT"
+            "signature": "El4KXAERTTIPHh4LZwCQZ6eouTMmM6bXAG7MWMeLOhxSYxF/387ZoTLkrWpRG97TTSH3j/kPjepnyVO3zeT7pcIsikCw49buQ7NUnL9JRj5RRWbc4fkP8F3Qt1mMm5lw"
           }
         }
       ],
@@ -212,7 +252,7 @@
       "llm_judge": {
         "faithfulness": 5,
         "relevance": 5,
-        "reasoning": "답변은 제공된 근거 초록(PMID: 36793719)을 바탕으로 치주염과 IgA 신병증의 ssGSEA 분석에서 확인된 면역세포인 T 세포와 B 세포를 정확하고 충실하게 답변하고 있습니다."
+        "reasoning": "제공된 근거 초록(PMID: 36793719)에 명시된 바와 같이 ssGSEA를 통해 분석된 치주염과 IgA 신병증 간의 주요 면역세포인 T 세포와 B 세포를 정확히 답변하고 있습니다."
       }
     },
     {
@@ -273,12 +313,20 @@
         "40763838"
       ],
       "hit": true,
-      "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
-      "grounded": false,
+      "generated_answer": [
+        {
+          "type": "text",
+          "text": "제공된 논문 초록에 따르면, 신세포암(KIRC)에서 CENPW를 억제(silencing)했을 때 나타난 기능적 변화는 다음과 같습니다:\n\n- 세포 증식(cell proliferation), 이동(migration), 침윤(invasion), 그리고 생체 내(in vivo) 종양 성장이 억제되었습니다 (PMID: 41077212).\n- 이러한 효과들은 PD-L1 및 E-cadherin 발현의 증가를 동반하여, CENPW가 면역 반응 및 상피-간엽 전이(epithelial-mesenchymal transition) 조절에 관여함을 시사합니다 (PMID: 41077212).",
+          "extras": {
+            "signature": "El4KXAERTTIPLAjEt+CoD6rUMtyaTAole+CAZ07Pd0RTlC5IW6nA7JR1aceQxkK6q7WW9gXMlgc+q+KiImdSdT3yqKeeAaUcrAl9isSJCTONkW02p3F6j7RmkhEmwloH"
+          }
+        }
+      ],
+      "grounded": true,
       "llm_judge": {
-        "faithfulness": null,
-        "relevance": null,
-        "reasoning": "Grounding Guard가 근거 부족으로 답변 생성을 차단함"
+        "faithfulness": 5,
+        "relevance": 5,
+        "reasoning": "답변은 제공된 근거 초록(PMID: 41077212)의 내용을 정확히 인용하여 신세포암에서 CENPW 억제 시 나타난 기능적 변화를 완벽하게 설명하고 있습니다."
       }
     },
     {
@@ -313,10 +361,10 @@
         "37605791",
         "40629293",
         "39308141",
-        "38509072",
-        "40596265"
+        "40596265",
+        "40696453"
       ],
-      "hit": false,
+      "hit": true,
       "generated_answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
       "grounded": false,
       "llm_judge": {
@@ -329,7 +377,7 @@
   "llm_judge_summary": {
     "avg_faithfulness": 5.0,
     "avg_relevance": 5.0,
-    "n_judged": 2,
+    "n_judged": 8,
     "n_total": 14
   }
 }
