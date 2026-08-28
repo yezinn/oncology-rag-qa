@@ -1,0 +1,240 @@
+{
+  "base_summary": {
+    "self_refusal_accuracy": 0.571,
+    "n_answered": 14,
+    "citation_rate_among_answered": 0.5
+  },
+  "dpo_summary": {
+    "self_refusal_accuracy": 0.571,
+    "n_answered": 14,
+    "citation_rate_among_answered": 0.643
+  },
+  "base_results": [
+    {
+      "id": "q-001",
+      "answer": "(PMID: 37605791) 논문에서 TTF-1 결핍은 EGFR-TKI 치료에 대한 부정적인 반응과 관련이 있으며, 특히 나이가 많고, 분화 수준이 높고, 부피가 큰 종양을 가진 환자들에서 이러한 특성을 보입니다. 이는 종양 미세 환경(TME)에서의 특정 세포 결핍을 의미하지만, 논문에서 직접적으로 TME에서 결핍된 핵심 세포를 언급하지는 않습니다. 따라서 이 문제에 대한 확실한 답변은 제공할 수 없습니다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-002",
+      "answer": "(TRACERx 코호트에서 서브클론성 전장유전체 배가(subclonal WGD)는 무병생존기간(disease-free survival)과 부적절한 관계를 보였습니다. 이는 TRACERx 연구에서 1,644개의 부위에서 수술이나 추적 과정 동안 수집된 421명의 비소세포 폐암(non-small cell lung cancer, NSCLC) 환자들의 부위에서 서브클론성 전장유전체 배가(subclonal WGD)가 19%의 환자에게 감지되었으며, 이는 1년 후 수술 후 외래신장 부위의 재발을 예측하는 데 사용되었습니다. 이 연구에서 서브클론성 전장유전체 배가(subclonal WGD)는 무병생존기간(disease-free survival)과 부적절한 관계를 보였습니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-003",
+      "answer": "(PMID: 24568474) Title: Relationships between EGFR mutation status of lung cancer and preoperative factors - are they predictive?\n\nAbstract: To clearly reveal the correlations between epidermal growth factor receptor (EGFR) mutation status and clinicopathological characteristics, Ki67 expression and immune cell Infiltration in lung adenocarcinoma (LUAD) with different radiological subtypes. Patients with pathological stage 0-III LUAD who underwent resection and received EGFR detection in our department between July 2019 and May 2023 were retrospectively reviewed. All included patients were divided into four groups based on different consolidation-to-tumour ratio (CTR). Tumors without ground glass opacity (GGO) component were defined as solid nodule featured LUAD (SN-LUAD, CTR = 1) and the other tumors with GGO were defined as GGO featured LUAD (GGO-LUAD, 0 ≤ CTR < 1). The clinicopathological characteristics, Ki67 expression, immune cell infiltration and EGFR mutation status were compared between diferent CTR groups. A total of 544 patients were finally included, 140 in the pure GGO group (PGGO, CTR = 0), 120 in the GGO-dominant group (GGO",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-004",
+      "answer": "(PMID: 37991778) Title: Clinical and Biomarker Findings of Neoadjuvant Pembrolizumab and Carboplatin Plus Docetaxel in Triple-Negative Breast Cancer: NeoPACT Phase 2 Clinical Trial.\n\nAnswer: Among the eligible study population of 115 female patients, the pathologic complete response (pCR) rate was 58% (95% CI, 48%-67%).",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-005",
+      "answer": "논문 초록을 통해 제공된 정보에 따르면, TNBC에서 면역관문억제제(免疫檢查點阻断제, ICB) 반응을 예측하는 공간적 종양미세환경 특징으로 가장 우세했던 것은 **면역관문억제제(IQ) 사용 여부**입니다.\n\n이 점을 확인하기 위해 다음과 같은 논문을 참고했습니다:\n\n- **(PMID: 40945207)**: 이 논문은 면역관문억제제(IQ) 사용 여부가 예측 모델의 성능에 영향을 미치는 변수로 분석되었습니다. 면역관문억제제(IQ) 사용 여부는 예측 모델의 AUC (Area Under the Curve) 값에 영향을 미치는 변수로 확인되었습니다.\n\n- **(PMID: 34580291)**: 이 논문은 면역관문억제제(IQ) 사용 여부가 종양 내 면역세포의 특징에 영향을 미치는 변수로 분석되었습니다. 면역관문억제제(IQ) 사용 여부가 종양 내 면역세포의 특징에 영향을 미치는 변수로 확인되었습니다.\n\n따라서, 면역관문억제제(I",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-006",
+      "answer": "(PMID: 40280564)에서 제공된 정보에 따르면, 종양 내 미생물총의 다양성과 부하량은 선행 항암화학면역요법(Chemo-IM)에 대한 병리학적 완전관해(pCR) 여부와 다음과 같은 관계를 보였습니다:\n\n1. **다양성**: pCR 그룹은 비-pCR 그룹보다 종양 내 미생물총의 다양성에 더 높았습니다.\n   \n2. **부하량**: pCR 그룹의 종양 내 미생물총 부하량이 비-pCR 그룹보다 높았습니다.\n\n이러한 결과는 종양 내 미생물총의 부하량과 다양성은 Chemo-IM에 대한 pCR에 긍정적인 영향을 미치는 것으로 보입니다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-007",
+      "answer": "(PMID: 37146605) Title: Clinical significance and biology of circulating tumor DNA in high-risk early-stage HER2-negative breast cancer receiving neoadjuvant chemotherapy.\n\n이 논문에서 선행항암화학요법(NAC) 시작 3주 후 ctDNA 조기 소실이 치료 반응을 예측한 것은 HER2-negative 아형의 초기 높은 위험도 유방암에서였습니다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-008",
+      "answer": "골관절염 (OA)에서 ssGSEA와 머신러닝 기반 다중오믹스 분석을 통해 도출된 핵심 미토콘드리아 관련 유전자는 9개입니다. 이 유전자는 다음과 같습니다:\n\n1. SIRT4\n2. DNAJC15\n3. NFS1\n4. FKBP8\n5. SLC25A37\n6. CARS2\n7. MTHFD2\n8. ETFDH\n9. PDK4",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-009",
+      "answer": "이 논문 초록을 바탕으로 ssGSEA로 확인된 주요 면역세포는 다음과 같습니다:\n\n1. T cells\n2. B cells\n\n이러한 면역세포들이 치주염과 IgA 신병증 사이의 연관성에 대한 연구에서 중요한 역할을 하는 것을 확인하고 있습니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-010",
+      "answer": "파킨슨병(PD)과 원발성 쇼그렌 증후군(pSS)을 연결하는 미토콘드리아 관련 핵심 신호경로는 STING(인자인 스타인지) 경로로 확인되었습니다. 이는 위의 논문에서 다음과 같이 언급되었습니다.\n\n\"Subsequent, bioinformatic analysis revealed the proportion of infiltrating immune cells in the STING-high and STING-low groups of pSS and PD. Furthermore, the study demonstrated the association of the STING pathway with innate and adaptive immune cells, as well as functional cells, in the immune microenvironment of PD and pSS. Our study uncovered a central pathway that connects mitochondrial dysfunction and the immune microenvironment in PD and pSS, potentially offering valuable insights into therapeutic targets for these conditions.\"\n\n따라서, 이 논문은 PD와 pSS를 연결하는 핵심 미토콘드리아 관련 신호경로로 STING 경로를 제시하고 있습니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-011",
+      "answer": "GloNetDRP는 기존의 dual-layer network 방식과 비교하여 다음의 점을 개선했다:\n\n1. **모듈 개선**: 기존의 dual-layer network는 query drug와 cell line의 인접 노드만을 고려하지만, GloNetDRP는 heterogenous network의 전체 노드들을 고려한다. 이는 query drug와 cell line 간의 관계뿐만 아니라, heterogenous network 내에서 다른 drug와 cell line들 간의 관계도 고려함으로써 더 넓은 범위에서 drug-cell line 관계를 이해할 수 있게 된다.\n\n2. **모듈 확장**: 기존의 dual-layer network는 query drug와 cell line의 인접 노드만을 고려하지만, GloNetDRP는 heterogenous network의 전체 노드들을 고려한다. 이는 query drug와 cell line 간의 관계뿐만 아니라, heterogenous network 내에서 다른 drug와 cell line들 간의 관계도 고려함으로써 더 넓은 범위에서 drug-cell line 관계를 이해할 수 있게 된다.\n\n이러한 개선으로 인해 GloNetDRP는 더 넓은 범위에서 drug-cell line 관계를 이해하고, 이에 기반한 drug response prediction의 성능을 향상시킨다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-012",
+      "answer": "CENPW 유전자를 억제했을 때 나타난 기능적 변화는 다음과 같습니다:\n\n1. KIRC 세포의 증식 (proliferation) 억제\n2. 세포의 이동 (migration) 억제\n3. 세포의 침투 (invasion) 억제\n4. 동물 모델에서 KIRC 세포 종양의 성장 억제\n\n이러한 기능적 변화는 CENPW의 유체적 개체성 (fluidic phenotype)을 억제하는 것으로 보입니다. 이는 세포의 생장, 이동 및 침투 능력을 줄이는 것으로 해석할 수 있습니다. 이러한 기능적 변화는 CENPW가 신세포암의 생장 및 전이 과정에서 중요한 역할을 하는 것을 시사합니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-013",
+      "answer": "(PMID: 40851062) Title: The immune signatures predict gastric/gastroesophageal junction cancer response to first-line anti-PD-1 blockade or chemotherapy.\n\nAccording to the abstract of the paper with the given PMID (PMID: 40851062), the survival disparities between anti-PD-1 immunotherapy and chemotherapy emerged 300 days post-treatment for patients with PD-L1 combined positive score (CPS) < 10.\n\nTherefore, the survival disparities between anti-PD-1 immunotherapy and chemotherapy began to emerge 300 days post-treatment for patients with PD-L1 CPS < 10.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-014",
+      "answer": "PREDICT 임상시험에서 말초혈액단핵구(PBMC) 기반으로 췌장암 2차 치료 결과(TTF2)를 예측하기 위해 개발된 모델의 이름은 \"TTF2Pred\"이며, 특징 수는 7개입니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    }
+  ],
+  "dpo_results": [
+    {
+      "id": "q-001",
+      "answer": "(PMID: 37605791) 논문에서 제공된 정보에 따르면, TTF-1 결핍은 EGFR-TKI 치료에 대한 부정적인 반응과 관련이 있습니다. 그러나 이 논문은 TME에서의 세포 유형이나 특정 세포 유형의 결핍에 대해 언급하지 않습니다. 따라서 이 논문에서 제공된 정보만을 바탕으로 특정 세포 유형이 TME에서 결핍되어 있음을 단적으로 증명할 수는 없습니다. 이 문제에 대한 확실한 답변을 제공하기 위해서는 더 많은 정보나 다른 논문을 참조해야 합니다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-002",
+      "answer": "(PMID: 37046096) Title: The evolution of lung cancer and impact of subclonal selection in TRACERx.\n\nAbstract: Lung cancer is the leading cause of cancer-associated mortality worldwide<sup>1</sup>. Here we analysed 1,644 tumour regions sampled at surgery or during follow-up from the first 421 patients with non-small cell lung cancer prospectively enrolled into the TRACERx study. This project aims to decipher lung cancer evolution and address the primary study endpoint: determining the relationship between intratumour heterogeneity and clinical outcome. In lung adenocarcinoma, mutations in 22 out of 40 common cancer genes were under significant subclonal selection, including classical tumour initiators such as TP53 and KRAS. We defined evolutionary dependencies between drivers, mutational processes and whole genome doubling (WGD) events. Despite patients having a history of smoking, 8% of lung adenocarcinomas lacked evidence of tobacco-induced mutagenesis. These tumours also had similar detection rates for EGFR mutations and for RET, ROS1, ALK and MET oncogenic isoforms compared with tumours in never-smokers, which suggests that they have a similar aetiology and pathogenesis. Large subclonal expansions were associated with positive subclonal selection. Patients with tumours harbouring recent subclonal expansions, on the terminus of a phy",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-003",
+      "answer": "(PMID: 24568474) 논문에서는 EGFR 변이 NSCLC가 소세포폐암(SCLC)로 형질전환되는 데 걸리는 평균 시간에 대해 언급하지 않습니다. 또한, 형질전환 이후 자주 동반되는 유전자 변이에 대해서도 논의되어 있지 않습니다.\n\nPMID: 24568474 논문의 주요 내용은 다음과 같습니다:\n\n1. EGFR 변이 NSCLC가 소세포폐암으로 형질전환되는 데 걸리는 평균 시간은 17.8 개월입니다.\n2. 형질전환 이후에 동반되는 유전자 변이로는 TP53, Rb1, PIK3CA가 언급되어 있습니다.\n\n따라서 답변은 다음과 같이 작성할 수 있습니다:\n\n(1) EGFR 변이 NSCLC가 소세포폐암으로 형질전환되는 데 걸리는 평균 시간은 17.8 개월입니다.\n\n(2) 형질전환 이후에 동반되는 유전자 변이로는 TP53, Rb1, PIK3CA가 언급되었습니다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-004",
+      "answer": "(PMID: 37991778) Title: Clinical and Biomarker Findings of Neoadjuvant Pembrolizumab and Carboplatin Plus Docetaxel in Triple-Negative Breast Cancer: NeoPACT Phase 2 Clinical Trial.\n\nAnswer: Among the eligible study population of 115 female patients (median [range] age, 50 [27-70] years) who enrolled from September 2018 to January 2022, the pathologic complete response (pCR) rate was 58% (95% CI, 48%-67%).",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-005",
+      "answer": "이 논문 초록들을 바탕으로 다음과 같이 답변할 수 있습니다:\n\nTNBC에서 면역관문억제제(免疫檢查點阻断제, ICB) 반응을 예측하는 공간적 종양미세환경 특징으로 가장 우세했던 것은 다음과 같습니다:\n\n1. **T cell evasion phenotypes** (T세포 피피나 phenotypes)\n   - **Excluded phenotype**: Collagen-10 deposits, enhanced glycolysis, and activation of TGFβ/VEGF pathways\n   - **Ignored phenotype**: High density of CD163+ myeloid cells or activation of WNT/PPARγ pathways\n   - **Inflamed phenotype**: Necrosis, high density of CLEC9A+ dendritic cells, high TCR clonality independent of neo-antigens, and enhanced expression of T cell co-inhibitory receptors\n\n이러한 phenotypes는 ICB 반응에 대한 예측 기준으로 사용될 수 있습니다. 이 중에서 **Inflamed phenotype**는 ICB 반응에 대한 가장 우수한 예측 기준으로 지목됩니다. 이 phenotype는 necrosis, CLEC9A+ dendritic cells의 높은 밀도, TCR 다중성, 그리고 T cell co-inhibitory receptors의 증가로 특징화됩니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-006",
+      "answer": "(PMID: 40280564)에서 제공된 논문 초록에 따르면, 종양 내 미생물총의 다양성과 부하량은 선행 항암화학면역요법(Chemo-IM)에 대한 병리학적 완전관해(pCR) 여부와 다음과 같은 관계를 보였습니다:\n\n1. pCR 그룹은 비-pCR 그룹에 비해 미생물총의 다양성과 부하량이 높았습니다.\n2. scRNA-seq 분석 결과, pCR 그룹에서는 T세포 infiltration이 증가하고, tumor-associated macrophage infiltration이 감소했습니다.\n3. 미생물총 부하량은 CD4<sup>+</sup>CXCL13<sup>+</sup> T세포 infiltration 증가와 CD68<sup>+</sup>SPP1<sup>+</sup> macrophage infiltration 감소와 양의 상관 관계가 있었습니다.\n\n따라서, 종양 내 미생물총의 다양성과 부하량은 선행 항암화학면역요법에 대한 pCR에 영향을 미치는 것으로 보입니다. 이는 개인화된 Chemo-IM 전략 개발에 도움이 될 수 있는 새로운 지표가 될 수 있습니다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-007",
+      "answer": "(PMID: 37146605)에서 제시된 내용에 따르면, I-SPY2 임상시험에서 선행항암화학요법(NAC) 시작 3주 후 ctDNA 조기 소실은 triple negative breast cancer (TNBC)에서만 치료 반응을 예측할 수 있었다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-008",
+      "answer": "(PMID: 38261436) Title: The correlation between pre-treatment CEA levels and the EGFR mutation status in advanced lung adenocarcinoma.\n\nAbstract: Osteoarthritis (OA) stands as the most prevalent joint disorder. Mitochondrial dysfunction has been linked to the pathogenesis of OA. The main goal of this study is to uncover the pivotal role of mitochondria in the mechanisms driving OA development. We acquired seven bulk RNA-seq datasets from the Gene Expression Omnibus (GEO) database and examined the expression levels of differentially expressed genes related to mitochondria in OA. We utilized single-sample gene set enrichment analysis (ssGSEA), gene set enrichment analysis (GSEA), and weighted gene co-expression network analysis (WGCNA) analyses to explore the functional mechanisms associated with these genes. Seven machine learning algorithms were utilized to identify hub mitochondria-related genes and develop a predictive model. Further analyses included pathway enrichment, immune infiltration, gene-disease relationships, and mRNA-miRNA network construction based on these hub mitochondria-related genes. genome-wide association studies (GWAS) analysis was performed using the Gene Atlas database. GSEA, gene set variation analysis (GSVA), protein pathway analysis, and WGCNA were employed to investigate relevant pathways in subtypes. The Harmonizome database was employed to analyze the expression of hub mitochondria-related genes across various human tissues. Single-cell data analysis was conducted to examine patterns",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-009",
+      "answer": "이 논문 초록을 바탕으로 ssGSEA로 확인된 주요 면역세포는 다음과 같습니다:\n\n1. T cells\n2. B cells\n\n이러한 면역세포들이 치주염과 IgA 신병증 사이의 연관성에 대한 연구에서 중요한 역할을 하고 있음을 나타내고 있습니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-010",
+      "answer": "(PMID: 38677173) 기반으로 한 이 논문에서 파킨슨병 (PD)과 원발성 쇼그렌 증후군 (pSS)을 연결하는 미토콘드리아 관련 핵심 신호경로는 STING (인자인 STIMulator) 경로로 확인되었습니다. 이 경로는 미토콘드리아와 면역 시스템 간의 연결을 통해 PD와 pSS 사이의 관계를 설명합니다. 이 연구에서는 STING 경로가 PD와 pSS의 면역 기능에 중요한 역할을 하는 것으로 밝혀졌습니다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-011",
+      "answer": "GloNetDRP는 기존의 dual-layer network 방식과 비교하여 다음과 같은 점을 개선했다:\n\n1. **모듈 개선**: 기존의 dual-layer network는 query drug와 cell line의 인접 노드만을 고려하지만, GloNetDRP는 heterogenous network의 모든 노드를 고려한다. 이는 query drug와 cell line의 직접적인 인접 노드뿐만 아니라, heterogenous network 내에서 다른 drug와 cell line의 관계까지 고려함으로써 더 넓은 범위에서 drug-cell line 관계를 이해할 수 있게 된다.\n\n2. **모듈 확장**: 기존의 dual-layer network는 query drug와 cell line의 인접 노드만을 고려하지만, GloNetDRP는 heterogenous network의 모든 노드를 고려한다. 이는 query drug와 cell line의 직접적인 인접 노드뿐만 아니라, heterogenous network 내에서 다른 drug와 cell line의 관계까지 고려함으로써 더 넓은 범위에서 drug-cell line 관계를 이해할 수 있게 된다.\n\n따라서, GloNetDRP는 heterogenous network를 사용하여 query drug와 cell line의 다양한 관계를 고려함으로써 더 나은 drug-cell line 관계 예측을 가능하게 하였다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-012",
+      "answer": "CENPW 유전자의 억제는 신세포암(KIRC) 세포의 다음과 같은 기능적 변화를 유발했습니다:\n\n1. KIRC 세포의 증식 (proliferation) 억제\n2. 세포의 이동 (migration) 억제\n3. 세포의 침투 (invasion) 억제\n4. 이동성 세포의 생장 (in vivo tumor growth) 억제\n\n이러한 기능적 변화는 PD-L1과 E-cadherin의 증가를 동반했습니다. 이는 CENPW가 세포의 면역 반응 및 epithelial-mesenchymal transition (epithelial-mesenchymal transition)에 관여한다는 것을 시사합니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-013",
+      "answer": "(PMID: 40851062) Title: The immune signatures predict gastric/gastroesophageal junction cancer response to first-line anti-PD-1 blockade or chemotherapy.\n\nAccording to the abstract of the paper with the given PMID (PMID: 40851062), the survival disparities between anti-PD-1 immunotherapy and chemotherapy emerged 300 days post-treatment for patients with PD-L1 combined positive score (CPS) < 10.\n\nTherefore, the survival disparities between anti-PD-1 immunotherapy and chemotherapy began to emerge 300 days post-treatment for patients with PD-L1 CPS < 10.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-014",
+      "answer": "PREDICT 임상시험에서 말초혈액단핵구(PBMC) 기반으로 췌장암 2차 치료 결과(TTF2)를 예측하기 위해 개발된 모델의 이름은 \"TTF2Pred\"이며, 특징 수는 7개입니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    }
+  ]
+}
