@@ -5,3 +5,9 @@ __pycache__/
 .DS_Store
 .env
 PROJECT_BRIEF.md
+
+# sLLM 로컬 파인튜닝 산출물 (대용량 바이너리 -- 저장소에 올리지 않음)
+adapters/
+*.safetensors
+*.gguf
+mlx_model*/

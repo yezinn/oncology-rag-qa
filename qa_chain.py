@@ -57,6 +57,25 @@ def get_vectorstore():
     return Chroma(persist_directory=PERSIST_DIR, embedding_function=embeddings)
 
 
+def extract_text(response):
+    """langchain-google-genai 최신 버전은 response.content가 순수 문자열이 아니라
+    [{"type": "text", "text": ..., "extras": {"signature": ...}}] 형태의 리스트로
+    올 수 있음(Gemini의 thought-signature 메타데이터 포함). 두 경우 모두 안전하게
+    순수 텍스트만 추출한다."""
+    content = response.content
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for item in content:
+            if isinstance(item, dict) and item.get("type") == "text":
+                parts.append(item.get("text", ""))
+            elif isinstance(item, str):
+                parts.append(item)
+        return "".join(parts)
+    return str(content)
+
+
 def format_context(docs_with_scores):
     parts = []
     for doc, _score in docs_with_scores:
@@ -81,7 +100,7 @@ def answer_question(question, llm, vectorstore):
     response = chain.invoke({"context": context, "question": question})
 
     return {
-        "answer": response.content,
+        "answer": extract_text(response),
         "sources": [doc.metadata.get("pmid") for doc, _ in results],
         "grounded": True,
     }
