@@ -4,6 +4,4 @@ __pycache__/
 *.pyc
 .DS_Store
 .env
-
-# 개인용 프로젝트 인계 문서 (공개 저장소에는 비공개로 유지 권장)
 PROJECT_BRIEF.md
