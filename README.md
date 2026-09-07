@@ -16,8 +16,9 @@ PubMed E-utilities API (fetch_pubmed.py)
         ▼
 RAG QA + Grounding Guard (qa_chain.py)
         │
-        ▼
-Golden Set 기반 자동 평가 + LLM-as-a-Judge (evaluate.py)
+        ├──▶ Golden Set 기반 자동 평가 + LLM-as-a-Judge (evaluate.py)
+        │
+        └──▶ FastAPI (main.py) + 웹 데모 UI (static/index.html)
 ```
 
 **LLM**: 답변 생성과 채점 모두 Google Gemini API(`gemini-3.5-flash-lite`, Google AI Studio)를
@@ -71,6 +72,21 @@ held-out 평가로 별도 검증).
 한계: preference pair 25개는 통계적으로 작은 규모이며, 학습 도구가 요구하는 `test.jsonl`은
 데이터 부족으로 `valid.jsonl`을 그대로 재사용함(`evaluate_sllm.py`의
 Golden Set 평가만이 실제 held-out 검증).
+
+## 웹 데모 UI
+
+FastAPI 백엔드(`main.py`)가 `qa_chain.answer_question()`을 `/qa/ask` REST 엔드포인트로
+감싸고, 같은 서버에서 정적 프론트엔드(`static/index.html`, 순수 HTML/CSS/바닐라 JS)를
+함께 서빙한다. 질문을 입력하면 답변, 출처 PMID(PubMed 원문 링크), Grounding Guard의
+통과/차단 여부와 top-1 유사도 점수를 화면에서 바로 확인할 수 있다.
+
+```bash
+pip install fastapi uvicorn --break-system-packages
+export GOOGLE_API_KEY="..."
+uvicorn main:app --reload
+# http://localhost:8000       (데모 UI)
+# http://localhost:8000/docs  (Swagger UI)
+```
 
 ## 실행 순서
 

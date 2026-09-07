@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PubMed RAG QA</title>
+<style>
+  :root {
+    color-scheme: light dark;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    max-width: 720px;
+    margin: 40px auto;
+    padding: 0 20px;
+    line-height: 1.6;
+  }
+  h1 { font-size: 1.4rem; }
+  .sub { color: #666; font-size: 0.9rem; margin-bottom: 24px; }
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    min-height: 70px;
+  }
+  button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+  }
+  button:disabled { background: #9ca3af; cursor: not-allowed; }
+  #result { margin-top: 24px; display: none; }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .badge.grounded { background: #dcfce7; color: #166534; }
+  .badge.blocked { background: #fee2e2; color: #991b1b; }
+  .answer {
+    white-space: pre-wrap;
+    padding: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fafafa;
+  }
+  .meta { color: #666; font-size: 0.85rem; margin-top: 10px; }
+  .sources { margin-top: 10px; }
+  .sources a { margin-right: 10px; font-size: 0.9rem; }
+  #error { color: #b91c1c; margin-top: 14px; }
+</style>
+</head>
+<body>
+
+<h1>PubMed RAG QA 데모</h1>
+<p class="sub">암 유전체/전사체 연구 논문 초록(240건)을 근거로 답변합니다. Grounding Guard가 근거 부족 질문은 자동으로 차단합니다.</p>
+
+<textarea id="question" placeholder="예: EGFR 변이 폐선암에서 예후와 관련된 바이오마커는?"></textarea>
+<br>
+<button id="askBtn" onclick="ask()">질문하기</button>
+
+<div id="error"></div>
+
+<div id="result">
+  <span id="badge" class="badge"></span>
+  <div id="answer" class="answer"></div>
+  <div class="meta" id="scoreInfo"></div>
+  <div class="sources" id="sources"></div>
+</div>
+
+<script>
+async function ask() {
+  const question = document.getElementById('question').value.trim();
+  const btn = document.getElementById('askBtn');
+  const errorEl = document.getElementById('error');
+  const resultEl = document.getElementById('result');
+
+  errorEl.textContent = '';
+  if (!question) {
+    errorEl.textContent = '질문을 입력해주세요.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '답변 생성 중...';
+  resultEl.style.display = 'none';
+
+  try {
+    const res = await fetch('/qa/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    });
+    if (!res.ok) {
+      throw new Error(`서버 오류 (${res.status})`);
+    }
+    const data = await res.json();
+    renderResult(data);
+  } catch (err) {
+    errorEl.textContent = '요청 실패: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '질문하기';
+  }
+}
+
+function renderResult(data) {
+  const badge = document.getElementById('badge');
+  const answerEl = document.getElementById('answer');
+  const scoreInfo = document.getElementById('scoreInfo');
+  const sourcesEl = document.getElementById('sources');
+
+  if (data.grounded) {
+    badge.textContent = '근거 확인됨 (Guard 통과)';
+    badge.className = 'badge grounded';
+  } else {
+    badge.textContent = '근거 부족 (Guard 차단)';
+    badge.className = 'badge blocked';
+  }
+
+  answerEl.textContent = data.answer;
+
+  const scoreText = data.top1_score !== null
+    ? data.top1_score.toFixed(4)
+    : 'N/A';
+  scoreInfo.textContent = `top1 유사도 점수: ${scoreText} (threshold: ${data.score_threshold})`;
+
+  sourcesEl.innerHTML = '';
+  if (data.sources && data.sources.length > 0) {
+    data.sources.forEach((pmid) => {
+      const a = document.createElement('a');
+      a.href = `https://pubmed.ncbi.nlm.nih.gov/${pmid}/`;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = `PMID: ${pmid}`;
+      sourcesEl.appendChild(a);
+    });
+  }
+
+  document.getElementById('result').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
