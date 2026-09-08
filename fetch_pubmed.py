@@ -23,7 +23,7 @@ QUERIES = {
     "transfer_learning_drug_response": "transfer learning cell line patient drug response prediction",
 }
 
-MAX_RESULTS_PER_QUERY = 60
+MAX_RESULTS_PER_QUERY = 150
 
 
 def search_pubmed(query, max_results=MAX_RESULTS_PER_QUERY):
