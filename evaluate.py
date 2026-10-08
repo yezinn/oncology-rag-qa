@@ -1,7 +1,11 @@
 """
 Golden Set 기반 평가 스크립트
 
-1) Retrieval Hit Rate: 기대 PMID가 실제로 검색되었는지 자동 측정 (기존 로직, 변경 없음)
+1) Retrieval Hit Rate: 기대 PMID가 실제로 검색되었는지 자동 측정.
+   (2026-10-08 업데이트) 순수 dense 검색 대신 BM25+Dense 하이브리드 리트리버로
+   측정하도록 변경 — Grounding Guard의 통과/차단 판단 자체는 여전히 dense cosine
+   score 기준(SCORE_THRESHOLD)으로 변경 없음. 하이브리드 리트리버는 (a) 이 Hit Rate
+   측정과 (b) Guard를 통과한 질문의 LLM 컨텍스트 구성에만 쓰인다.
 2) LLM-as-a-Judge: qa_chain.py로 실제 답변을 생성시킨 뒤, 별도의 LLM 채점자가
    (a) Faithfulness — 답변의 모든 주장이 제공된 근거 초록에서 실제로 확인되는가
    (b) Relevance — 답변이 질문을 실제로 다루고 있는가
@@ -20,7 +24,7 @@ Golden Set 기반 평가 스크립트
 import json
 import os
 import time
-from qa_chain import get_vectorstore, answer_question, TOP_K
+from qa_chain import get_vectorstore, get_hybrid_retriever, answer_question
 
 GOLDEN_SET_PATH = "golden_set.json"
 # gemini-2.5-flash-lite는 신규 사용자에게 더 이상 제공되지 않아(2026-08 기준)
@@ -79,6 +83,7 @@ def main():
         golden_set = json.load(f)
 
     vectorstore = get_vectorstore()
+    hybrid_retriever = get_hybrid_retriever(vectorstore)
 
     run_judge = bool(os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY"))
     gen_llm = judge_llm = None
@@ -96,7 +101,7 @@ def main():
     faithfulness_scores, relevance_scores = [], []
 
     for case in golden_set:
-        docs = vectorstore.similarity_search(case["question"], k=TOP_K)
+        docs = hybrid_retriever.invoke(case["question"])
         retrieved_pmids = [d.metadata.get("pmid") for d in docs]
         expected = set(case["expected_pmids"])
         hit = bool(expected & set(retrieved_pmids))
@@ -111,7 +116,7 @@ def main():
         }
 
         if run_judge:
-            result = answer_question(case["question"], gen_llm, vectorstore)
+            result = answer_question(case["question"], gen_llm, vectorstore, hybrid_retriever)
             entry["generated_answer"] = result["answer"]
             entry["grounded"] = result["grounded"]
             time.sleep(SLEEP_BETWEEN_CALLS_SEC)

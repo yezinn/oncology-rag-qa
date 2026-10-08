@@ -1,6 +1,8 @@
 biopython
 langchain
 langchain-community
+langchain_classic
+rank_bm25
 langchain-google-genai
 chromadb
 sentence-transformers
