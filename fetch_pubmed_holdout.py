@@ -1,8 +1,12 @@
 """
-weak_evidence "경계선 예시" 재설계용 -- 기존 코퍼스와 같은 4개 도메인에서, 색인 안 된
+weak_evidence "경계선 예시" 재설계용 -- 기존 코퍼스와 같은 도메인에서, 색인 안 된
 다음 순위(151~180위) 논문을 별도로 수집합니다. 이 논문들은 data/abstracts.json(색인 대상)
 에는 포함되지 않으므로 chroma_db에도 안 들어갑니다 -- 즉 "같은 도메인 어휘를 쓰지만 실제로는
 검색이 안 되는" 진짜 근거 불충분 사례를 만드는 재료로 씁니다.
+
+2026-10-09: 도메인 쿼리(QUERIES)는 fetch_pubmed.py와 동일하게 topics_config.py의
+TOPICS에서 가져온다 — 더 이상 이 파일에 따로 하드코딩하지 않음(두 파일이 몰래
+어긋나는 걸 막기 위함).
 
 사전 준비:
     export ENTREZ_EMAIL="..."
@@ -15,16 +19,11 @@ import os
 import json
 import time
 from Bio import Entrez
+from topics_config import TOPICS
 
 Entrez.email = os.environ.get("ENTREZ_EMAIL", "your_email@example.com")
 
-# fetch_pubmed.py와 동일한 4개 도메인 쿼리 (재현성을 위해 여기도 명시)
-QUERIES = {
-    "egfr_luad_prognosis": "EGFR mutation lung adenocarcinoma prognosis biomarker",
-    "tnbc_chemo_response": "triple negative breast cancer neoadjuvant chemotherapy response prediction",
-    "ssgsea_pathway": "ssGSEA pathway enrichment gene expression",
-    "transfer_learning_drug_response": "transfer learning cell line patient drug response prediction",
-}
+QUERIES = TOPICS
 
 RETSTART = 150  # 기존 코퍼스가 상위 150건을 색인했으므로 그다음 순위부터
 RETMAX = 30     # 도메인당 30건씩, 총 120건
