@@ -6,7 +6,7 @@ RAG 기반 QA 체인.
 사전 준비:
     pip install langchain-google-genai --break-system-packages
     export GOOGLE_API_KEY="..."
-    
+
 사용법:
     python qa_chain.py
 """
@@ -15,7 +15,9 @@ import re
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.retrievers import BM25Retriever
-from langchain_classic.retrievers import EnsembleRetriever
+from langchain_community.cross_encoders import HuggingFaceCrossEncoder
+from langchain_classic.retrievers import EnsembleRetriever, ContextualCompressionRetriever
+from langchain_classic.retrievers.document_compressors import CrossEncoderReranker
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -30,11 +32,40 @@ TOP_K = 5
 # 임베딩을 정규화하지 않고 Chroma 기본(L2) 거리를 쓰면 음수가 나오는 버그가 있었음.
 # get_vectorstore()에서 normalize_embeddings=True + cosine space로 고침 (build_index.py도 동일 설정).
 #
-# !! 2026-10-08 임베딩 모델 교체로 재튜닝 필요 !!
-# 아래 0.30은 all-MiniLM-L6-v2 기준으로 튜닝된 값으로, 모델이 바뀌면 점수 분포 자체가
-# 달라져서 더 이상 유효하지 않음. build_index.py로 (기존 ./chroma_db 삭제 후) 재인덱싱한
-# 다음, check_scores.py를 다시 돌려서 새 hit/miss 점수 분포를 보고 이 값을 다시 정할 것.
-SCORE_THRESHOLD = 0.30  # TODO: check_scores.py로 재튜닝 전까지의 임시값
+# 2026-10-08 임베딩 모델 교체(paraphrase-multilingual-MiniLM-L12-v2)에 맞춰 재튜닝함.
+# check_scores.py(golden set 14개, in-domain) + check_offtopic_scores.py(코퍼스 밖
+# 질문)로 실측한 점수 분포:
+#   - golden set 14개 in-domain 질문의 top1_score 최소값: 0.4919
+#   - 완전히 무관한 질문(지하철 요금/저녁 메뉴/월드컵) top1_score: 0.1595~0.1851
+#   - "의학적으로 그럴듯하지만 코퍼스 밖 도메인"인 adversarial 질문(제2형 당뇨병
+#     인슐린 저항성 — 이 코퍼스는 암 유전체 전문): top1_score 0.7098
+# 즉 "완전히 무관한 주제"는 0.19 이하로 깔끔하게 분리되지만, "생물의학적으로 그럴듯한
+# 오답"은 오히려 진짜 정답(0.49)보다도 높게 나옴 — top-1 cosine 임계값 하나로는
+# 후자를 걸러낼 수 없음(구조적 한계, 단일 threshold로 해결 불가). SCORE_THRESHOLD는
+# 더 이상 Guard 판단에 쓰지 않지만(아래 RERANK_THRESHOLD 참고), get_reranker_retriever가
+# 없는 경로의 호환성을 위해 상수는 남겨둔다.
+SCORE_THRESHOLD = 0.40
+
+# 우선순위 2 (Reranker, 2026-10-08). 다국어 지원 모델을 반드시 써야 함 — 영어 전용
+# bge-reranker-base를 썼다면 한국어 질문에서 §5와 똑같은 cross-lingual 문제를
+# reranker 단계에서 반복했을 것. bge-reranker-v2-m3는 다국어 지원.
+RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
+# reranker에 넘길 dense 후보 풀 크기. 최종적으로는 top_n(=TOP_K)개로 줄이지만,
+# 후보 풀 자체가 너무 좁으면(k=TOP_K) 애초에 정답이 후보에 없어서 reranker가
+# 재정렬할 것이 없음 — §5에서 Reranker가 "1차 검색이 이미 추려온 후보 안에서만
+# 재정렬한다"는 한계를 짚었던 것과 같은 이유로 더 넓게 가져옴.
+RERANK_CANDIDATE_K = 15
+# check_reranker_scores.py 실측(2026-10-08, golden set 14개 + off-topic 3개 +
+# adversarial 1개): in-domain 최소 0.9629 / off-topic 최대 0.0049 / adversarial
+# (제2형 당뇨병 인슐린 저항성) 최대 0.0709. dense cosine에서는 이 adversarial
+# 케이스가 in-domain 최소(0.4919)보다도 높게(0.7098) 나와 구분이 안 됐지만,
+# Cross-Encoder는 질문+문서를 함께 평가(joint encoding)하기 때문에 "생물의학
+# 용어/어투는 비슷해도 실제 내용은 다른 도메인"이라는 세부 불일치를 훨씬 잘
+# 잡아냄 — in-domain과 adversarial 사이에 약 13배(0.96 vs 0.07) 마진이 생김.
+# 그래서 Grounding Guard 판단 기준을 dense cosine(SCORE_THRESHOLD)에서 이
+# reranker score로 교체한다. 0.5는 그 큰 마진 사이 어디든 잡아도 안전하지만,
+# 임의로 중간값을 쓰기보다 실측값에 안전 마진을 둔 값.
+RERANK_THRESHOLD = 0.5
 
 # 무료 티어(Google AI Studio) 모델. gemini-2.5-flash-lite는 신규 사용자에게 더 이상
 # 제공되지 않아(2026-08 기준) gemini-3.5-flash-lite로 교체함. 모델명이 또 바뀌었다면
@@ -85,11 +116,8 @@ def bm25_preprocess(text):
 def get_hybrid_retriever(vectorstore):
     """Sparse(BM25) + Dense(Chroma) 하이브리드 리트리버 (RRF로 융합).
 
-    주의: Grounding Guard의 통과/차단 판단은 answer_question()에서 여전히
-    기존 dense cosine score(SCORE_THRESHOLD) 기준으로만 이뤄진다 — 그대로 유지.
-    EnsembleRetriever의 RRF 융합 결과는 원래의 유사도 점수를 보존하지 않으므로
-    Guard 판단 기준으로 쓸 수 없기 때문. 이 하이브리드 리트리버는 Guard를 통과한
-    뒤 LLM에 전달할 컨텍스트 문서를 고르는 데에만 사용한다.
+    LLM에 전달할 컨텍스트 문서를 고르는 데에만 사용한다(Guard 판단과는 분리 —
+    아래 answer_question()의 cross_encoder 설명 참고).
 
     BM25Retriever의 코퍼스는 build_index.py의 load_documents()를 그대로 재사용해
     data/abstracts.json에서 직접 구성한다 — Chroma 인덱스를 만들 때 쓴 것과 완전히
@@ -108,6 +136,40 @@ def get_hybrid_retriever(vectorstore):
         retrievers=[bm25_retriever, dense_retriever],
         weights=[0.5, 0.5],
     )
+
+
+def get_reranker_retriever(vectorstore, top_n=TOP_K, candidate_k=RERANK_CANDIDATE_K):
+    """Dense 후보를 Cross-Encoder로 재정렬하는 리트리버.
+
+    주의: CrossEncoderReranker.compress_documents()는 재정렬된 Document만 돌려주고
+    원래 rerank score는 메타데이터에 남기지 않는다(langchain_classic 소스 확인,
+    2026-10-08) — score 자체가 필요하면(Guard 판단 등) 이 함수가 아니라
+    rerank_top1_score()처럼 HuggingFaceCrossEncoder(...).score(...)를 직접 호출해야 함.
+    """
+    base_retriever = vectorstore.as_retriever(search_kwargs={"k": candidate_k})
+    cross_encoder = HuggingFaceCrossEncoder(model_name=RERANKER_MODEL)
+    reranker = CrossEncoderReranker(model=cross_encoder, top_n=top_n)
+    return ContextualCompressionRetriever(base_compressor=reranker, base_retriever=base_retriever)
+
+
+def get_cross_encoder():
+    """Guard 판단용 Cross-Encoder 모델을 한 번만 로드해서 재사용하기 위한 헬퍼."""
+    return HuggingFaceCrossEncoder(model_name=RERANKER_MODEL)
+
+
+def rerank_top1_score(cross_encoder, vectorstore, question, candidate_k=RERANK_CANDIDATE_K):
+    """Guard 판단에 쓸 reranker top1 score만 계산한다.
+
+    get_reranker_retriever()는 재정렬된 Document 리스트만 반환하고 점수는 버리므로
+    (위 주석 참고) Guard처럼 "점수 자체"가 필요한 곳에서는 이 함수를 쓴다.
+    check_reranker_scores.py의 top1_rerank()와 동일한 로직(후보는 dense만 사용).
+    """
+    candidates = vectorstore.similarity_search(question, k=candidate_k)
+    if not candidates:
+        return None
+    pairs = [(question, d.page_content) for d in candidates]
+    scores = list(cross_encoder.score(pairs))
+    return max(scores)
 
 
 def extract_text(response):
@@ -146,12 +208,25 @@ def format_context_docs(docs):
     return "\n\n".join(parts)
 
 
-def answer_question(question, llm, vectorstore, hybrid_retriever=None):
-    results = vectorstore.similarity_search_with_relevance_scores(question, k=TOP_K)
-
+def answer_question(question, llm, vectorstore, hybrid_retriever=None, cross_encoder=None):
     # --- Grounding Guard: 근거가 불충분하면 LLM 호출 자체를 하지 않음 ---
-    # (hybrid_retriever를 넘겨도 이 판단은 항상 dense cosine score 기준 그대로 — 변경 없음)
-    if not results or results[0][1] < SCORE_THRESHOLD:
+    # cross_encoder가 주어지면 reranker score 기준(RERANK_THRESHOLD)으로 판단하고,
+    # 주어지지 않으면 기존 dense cosine score 기준(SCORE_THRESHOLD)으로 판단한다
+    # (하위 호환 — cross_encoder 없이 호출하던 기존 코드는 그대로 동작).
+    # 2026-10-08: dense cosine 단일 threshold는 "의학적으로 그럴듯하지만 코퍼스
+    # 밖 도메인"인 adversarial 질문을 못 거르는 구조적 한계가 있음
+    # (check_offtopic_scores.py: adversarial 0.7098 > in-domain 최소 0.4919).
+    # check_reranker_scores.py로 같은 질문들을 reranker score로 실측하니 in-domain
+    # 최소 0.9629 / adversarial 최대 0.0709로 명확히 분리됨 — 그래서 가능하면
+    # cross_encoder 기준을 쓴다 (RERANKER_MODEL 상단 주석 참고).
+    if cross_encoder is not None:
+        score = rerank_top1_score(cross_encoder, vectorstore, question)
+        grounded_ok = score is not None and score >= RERANK_THRESHOLD
+    else:
+        results = vectorstore.similarity_search_with_relevance_scores(question, k=TOP_K)
+        grounded_ok = bool(results) and results[0][1] >= SCORE_THRESHOLD
+
+    if not grounded_ok:
         return {
             "answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
             "sources": [],
@@ -164,6 +239,7 @@ def answer_question(question, llm, vectorstore, hybrid_retriever=None):
         context = format_context_docs(hybrid_docs)
         sources = [doc.metadata.get("pmid") for doc in hybrid_docs]
     else:
+        results = vectorstore.similarity_search_with_relevance_scores(question, k=TOP_K)
         context = format_context(results)
         sources = [doc.metadata.get("pmid") for doc, _ in results]
 
@@ -181,14 +257,16 @@ def main():
     llm = ChatGoogleGenerativeAI(model=GEN_MODEL, temperature=0)
     vectorstore = get_vectorstore()
     hybrid_retriever = get_hybrid_retriever(vectorstore)
+    print("Reranker 모델 로딩 중 (Grounding Guard 판단용)...")
+    cross_encoder = get_cross_encoder()
 
-    print("종료하려면 'exit' 입력")
-    print("(Grounding Guard 판단: dense cosine score 기준 / LLM 컨텍스트: BM25+Dense 하이브리드)\n")
+    print("\n종료하려면 'exit' 입력")
+    print("(Grounding Guard 판단: reranker score 기준 / LLM 컨텍스트: BM25+Dense 하이브리드)\n")
     while True:
         question = input("질문: ")
         if question.strip().lower() == "exit":
             break
-        result = answer_question(question, llm, vectorstore, hybrid_retriever)
+        result = answer_question(question, llm, vectorstore, hybrid_retriever, cross_encoder)
         print("\n답변:", result["answer"])
         print("출처 PMID:", result["sources"], "\n")
 

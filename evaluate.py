@@ -3,14 +3,17 @@ Golden Set 기반 평가 스크립트
 
 1) Retrieval Hit Rate: 기대 PMID가 실제로 검색되었는지 자동 측정.
    (2026-10-08 업데이트) 순수 dense 검색 대신 BM25+Dense 하이브리드 리트리버로
-   측정하도록 변경 — Grounding Guard의 통과/차단 판단 자체는 여전히 dense cosine
-   score 기준(SCORE_THRESHOLD)으로 변경 없음. 하이브리드 리트리버는 (a) 이 Hit Rate
-   측정과 (b) Guard를 통과한 질문의 LLM 컨텍스트 구성에만 쓰인다.
+   측정하도록 변경.
 2) LLM-as-a-Judge: qa_chain.py로 실제 답변을 생성시킨 뒤, 별도의 LLM 채점자가
    (a) Faithfulness — 답변의 모든 주장이 제공된 근거 초록에서 실제로 확인되는가
    (b) Relevance — 답변이 질문을 실제로 다루고 있는가
    두 기준으로 1~5점을 매김. GOOGLE_API_KEY가 설정된 경우에만 실행되고,
    없으면 1)만 실행하고 건너뜀 (키 없이도 기존처럼 정상 동작).
+   (2026-10-08 업데이트) 이 경로의 Grounding Guard 판단 기준도 qa_chain.py와
+   동일하게 dense cosine -> reranker score로 교체됨(answer_question()에
+   cross_encoder를 넘김). check_reranker_scores.py로 실측한 in-domain 최소
+   0.9629 vs adversarial 최대 0.0709의 큰 마진 덕분에, 평가 경로의 Guard
+   동작이 실제 qa_chain.py main()의 동작과 정확히 일치한다.
 
 사전 준비:
     golden_set_template.json을 복사해 golden_set.json으로 만들고, 본인 지식으로
@@ -24,7 +27,7 @@ Golden Set 기반 평가 스크립트
 import json
 import os
 import time
-from qa_chain import get_vectorstore, get_hybrid_retriever, answer_question
+from qa_chain import get_vectorstore, get_hybrid_retriever, get_cross_encoder, answer_question
 
 GOLDEN_SET_PATH = "golden_set.json"
 # gemini-2.5-flash-lite는 신규 사용자에게 더 이상 제공되지 않아(2026-08 기준)
@@ -86,13 +89,15 @@ def main():
     hybrid_retriever = get_hybrid_retriever(vectorstore)
 
     run_judge = bool(os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY"))
-    gen_llm = judge_llm = None
+    gen_llm = judge_llm = cross_encoder = None
     if run_judge:
         from qa_chain import GEN_MODEL
         from langchain_google_genai import ChatGoogleGenerativeAI
 
         gen_llm = ChatGoogleGenerativeAI(model=GEN_MODEL, temperature=0)
         judge_llm = build_judge_llm()
+        print("Reranker 모델 로딩 중 (Grounding Guard 판단용)...")
+        cross_encoder = get_cross_encoder()
     else:
         print("(GOOGLE_API_KEY 미설정 — LLM-as-a-Judge는 건너뛰고 retrieval hit rate만 측정합니다)\n")
 
@@ -116,7 +121,7 @@ def main():
         }
 
         if run_judge:
-            result = answer_question(case["question"], gen_llm, vectorstore, hybrid_retriever)
+            result = answer_question(case["question"], gen_llm, vectorstore, hybrid_retriever, cross_encoder)
             entry["generated_answer"] = result["answer"]
             entry["grounded"] = result["grounded"]
             time.sleep(SLEEP_BETWEEN_CALLS_SEC)
