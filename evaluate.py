@@ -1,18 +1,31 @@
 """
 Golden Set 기반 평가 스크립트
 
-1) Retrieval Hit Rate: 기대 PMID가 실제로 검색되었는지 자동 측정 (기존 로직, 변경 없음)
+1) Retrieval Hit Rate: 기대 PMID가 실제로 검색되었는지 자동 측정.
+   (2026-10-08 업데이트) 순수 dense 검색 대신 BM25+Dense 하이브리드 리트리버로
+   측정하도록 변경.
 2) LLM-as-a-Judge: qa_chain.py로 실제 답변을 생성시킨 뒤, 별도의 LLM 채점자가
    (a) Faithfulness — 답변의 모든 주장이 제공된 근거 초록에서 실제로 확인되는가
    (b) Relevance — 답변이 질문을 실제로 다루고 있는가
    두 기준으로 1~5점을 매김. GOOGLE_API_KEY가 설정된 경우에만 실행되고,
    없으면 1)만 실행하고 건너뜀 (키 없이도 기존처럼 정상 동작).
+   (2026-10-08 업데이트) 이 경로의 Grounding Guard 판단 기준도 qa_chain.py와
+   동일하게 dense cosine -> reranker score로 교체됨(answer_question()에
+   cross_encoder를 넘김). check_reranker_scores.py로 실측한 in-domain 최소
+   0.9629 vs adversarial 최대 0.0709의 큰 마진 덕분에, 평가 경로의 Guard
+   동작이 실제 qa_chain.py main()의 동작과 정확히 일치한다.
+   (2026-10-09 업데이트) Guard 1차 차단 시 qa_chain.py의 Corrective RAG
+   재검색(corrective_pubmed_retry)도 동일하게 거치므로, entry["corrective"]로
+   어떤 케이스가 실시간 PubMed 재검색을 통해 구제됐는지 결과에 기록한다.
+   judge에 넘기는 컨텍스트도 result["context"](실제 생성에 쓰인 근거)를 그대로
+   써서 corrective 케이스에서 컨텍스트가 어긋나지 않게 한다.
 
 사전 준비:
     golden_set_template.json을 복사해 golden_set.json으로 만들고, 본인 지식으로
     질문과 정답 PMID를 채워넣는다(최소 10~15개 권장).
     LLM-as-a-Judge까지 실행하려면: export GOOGLE_API_KEY="..."
     (Google AI Studio 발급: https://aistudio.google.com/apikey)
+    Corrective RAG 재검색까지 실행하려면: export ENTREZ_EMAIL="..."
 
 사용법:
     python evaluate.py
@@ -20,7 +33,7 @@ Golden Set 기반 평가 스크립트
 import json
 import os
 import time
-from qa_chain import get_vectorstore, answer_question, TOP_K
+from qa_chain import get_vectorstore, get_hybrid_retriever, get_cross_encoder, answer_question
 
 GOLDEN_SET_PATH = "golden_set.json"
 # gemini-2.5-flash-lite는 신규 사용자에게 더 이상 제공되지 않아(2026-08 기준)
@@ -79,15 +92,18 @@ def main():
         golden_set = json.load(f)
 
     vectorstore = get_vectorstore()
+    hybrid_retriever = get_hybrid_retriever(vectorstore)
 
     run_judge = bool(os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY"))
-    gen_llm = judge_llm = None
+    gen_llm = judge_llm = cross_encoder = None
     if run_judge:
         from qa_chain import GEN_MODEL
         from langchain_google_genai import ChatGoogleGenerativeAI
 
         gen_llm = ChatGoogleGenerativeAI(model=GEN_MODEL, temperature=0)
         judge_llm = build_judge_llm()
+        print("Reranker 모델 로딩 중 (Grounding Guard 판단용)...")
+        cross_encoder = get_cross_encoder()
     else:
         print("(GOOGLE_API_KEY 미설정 — LLM-as-a-Judge는 건너뛰고 retrieval hit rate만 측정합니다)\n")
 
@@ -96,7 +112,7 @@ def main():
     faithfulness_scores, relevance_scores = [], []
 
     for case in golden_set:
-        docs = vectorstore.similarity_search(case["question"], k=TOP_K)
+        docs = hybrid_retriever.invoke(case["question"])
         retrieved_pmids = [d.metadata.get("pmid") for d in docs]
         expected = set(case["expected_pmids"])
         hit = bool(expected & set(retrieved_pmids))
@@ -111,16 +127,18 @@ def main():
         }
 
         if run_judge:
-            result = answer_question(case["question"], gen_llm, vectorstore)
+            result = answer_question(case["question"], gen_llm, vectorstore, hybrid_retriever, cross_encoder)
             entry["generated_answer"] = result["answer"]
             entry["grounded"] = result["grounded"]
+            entry["corrective"] = result.get("corrective", False)
             time.sleep(SLEEP_BETWEEN_CALLS_SEC)
 
             if result["grounded"]:
-                context = "\n\n".join(
-                    f"(PMID: {d.metadata.get('pmid')}) {d.page_content}" for d in docs
-                )
-                judge = judge_answer(case["question"], context, result["answer"], judge_llm)
+                # result["context"]는 answer_question()이 실제로 LLM에 넘긴 컨텍스트
+                # (하이브리드 검색 결과 또는 — corrective=True인 경우 — 실시간 PubMed
+                # 재검색 결과)다. 위 docs(하이브리드 Hit Rate 측정용)로 다시 만들면
+                # corrective 케이스에서 실제 생성에 쓰인 근거와 어긋나므로 그대로 쓴다.
+                judge = judge_answer(case["question"], result["context"], result["answer"], judge_llm)
                 time.sleep(SLEEP_BETWEEN_CALLS_SEC)
             else:
                 judge = {

@@ -28,9 +28,9 @@ from qa_chain import GEN_MODEL as _  # noqa: F401 (미사용, Gemini 관련 상�
 from qa_chain import PROMPT, SCORE_THRESHOLD, TOP_K, get_vectorstore
 
 BASE_MODEL = "mlx-community/Qwen2.5-3B-Instruct-4bit"
-ADAPTER_PATH = "adapters"
+ADAPTER_PATH = "adapters_v6"   # v6: 코퍼스 이상치(학회 초록집) 제거 + max-seq-length 지정
 GOLDEN_SET_PATH = "golden_set.json"
-OUTPUT_PATH = "sllm_evaluation_result.json"
+OUTPUT_PATH = "sllm_evaluation_result_v6.json"   # v1~v5 결과와 비교 위해 별도 파일
 MAX_TOKENS = 300
 
 CITATION_PATTERN = re.compile(r"\(PMID[:\s]*\d+\)")

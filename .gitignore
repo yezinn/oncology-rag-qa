@@ -11,3 +11,6 @@ adapters/
 *.safetensors
 *.gguf
 mlx_model*/
+adapters_v*/
+*.log
+log.txt

@@ -1,0 +1,240 @@
+{
+  "base_summary": {
+    "self_refusal_accuracy": 0.571,
+    "n_answered": 14,
+    "citation_rate_among_answered": 0.429
+  },
+  "dpo_summary": {
+    "self_refusal_accuracy": 0.571,
+    "n_answered": 8,
+    "citation_rate_among_answered": 0.25
+  },
+  "base_results": [
+    {
+      "id": "q-001",
+      "answer": "(PMID: 37605791) 논문에서 TTF-1 결핍이 EGFR-TKIs 치료에 대한 부정적인 반응과 관련이 있다는 점을 확인할 수 있습니다. 하지만 이 논문은 TME와 직접적으로 연관된 세포 유형이나 특성에 대해 언급하지 않습니다. 따라서 이 논문만을 바탕으로 특정 세포 유형이 TME에서 결핍되어 있는지 알 수는 없습니다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-002",
+      "answer": "이 논문 초록에 주어진 정보는 답변에 사용할 수 없습니다. 주어진 초록은 주로 니모노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피노스피",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-003",
+      "answer": "(PMID: 30550363) Title: EGFR-Mutant Adenocarcinomas That Transform to Small-Cell Lung Cancer and Other Neuroendocrine Carcinomas: Clinical Outcomes.\n\nAbstract: Approximately 3% to 10% of EGFR (epidermal growth factor receptor) -mutant non-small cell lung cancers (NSCLCs) undergo transformation to small-cell lung cancer (SCLC), but their clinical course is poorly characterized. We retrospectively identified patients with EGFR-mutant SCLC and other high-grade neuroendocrine carcinomas seen at our eight institutions. Demographics, disease features, and outcomes were analyzed. We included 67 patients-38 women and 29 men; EGFR mutations included exon 19 deletion (69%), L858R (25%), and other (6%). At the initial lung cancer diagnosis, 58 patients had NSCLC and nine had de novo SCLC or mixed histology. All but these nine patients received one or more EGFR tyrosine kinase inhibitor before SCLC transformation. Median time to transformation was 17.8 months (95% CI, 14.3 to 26.2 months). After transformation, both platinum-etoposide and taxanes yielded high response rates, but none of 17 patients who received immunotherapy experienced a response. Median overall",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-004",
+      "answer": "(PMID: 37991778)에 따르면, NeoPACT Phase 2 임상시험에서 carboplatin (카보플라틴)과 docetaxel (도제타시르)에 pembrolizumab (페모리즈무)을 추가한 선행요법은 병리학적 완전관해율 (pCR)이 58% (95% 신뢰구간: 48%-67%)을 기록했습니다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-005",
+      "answer": "논문 초록을 통해 제공된 정보에 따르면, TNBC에서 면역관문억제제(免疫檢查點阻断제, ICB) 반응을 예측하는 공간적 종양미세환경 특징으로 가장 우세했던 것은 **면역관문억제제(IQ) 사용 여부**입니다.\n\n이 점을 확인하기 위해 다음과 같은 논문을 참고했습니다:\n\n- **(PMID: 40945207)**: 이 논문은 면역관문억제제(IQ) 사용 여부가 예측 모델의 성능에 영향을 미치는 변수로 분석되었습니다. 면역관문억제제(IQ) 사용 여부는 예측 모델의 AUC (Area Under the Curve) 값에 영향을 미치는 변수로 확인되었습니다.\n\n- **(PMID: 34580291)**: 이 논문은 면역관문억제제(IQ) 사용 여부가 종양 내 면역세포의 특징에 영향을 미치는 변수로 분석되었습니다. 면역관문억제제(IQ) 사용 여부가 종양 내 면역세포의 특징에 영향을 미치는 변수로 확인되었습니다.\n\n따라서, 면역관문억제제(I",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-006",
+      "answer": "(PMID: 40280564) Title: Intratumoral microbiota predicts the response to neoadjuvant chemoimmunotherapy in triple-negative breast cancer.\n\nAbstract: Neoadjuvant immunotherapy combined with chemotherapy (Chemo-IM) is associated with significantly improved pathological complete response (pCR) rates and long-term survival outcomes in patient with early-stage triple-negative breast cancer (TNBC). However, only a small proportion of patients benefit from the addition of immunotherapy. Here, we explored and confirmed the role of intratumoral microbiota in screening patients with TNBC who are likely to benefit from neoadjuvant Chemo-IM. \n\n이 논문에서 종양 내 미생물총의 다양성 및 부하량은 선행 항암화학면역요법(Chemo-IM)에 대한 병리학적 완전관해(pCR) 여부와 다음과 같은 관계를 보였습니다:\n\n1. pCR 그룹의 종양 내 미생물총의 다양성과 부하량이 non-pCR 그룹보다 높음.\n2. scRNA-seq 결과에서 pCR 그룹은 T세포 infiltration이 증가하고 tumor-associated macrophage infiltration이 감소함을 확인함.\n\n따라서, 이 연구에서는 종양 내 미생물총의 다양성 및 부하량이 선행 항암",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-007",
+      "answer": "[답변]\nI-SPY2 임상시험에서 선행항암화학요법(NAC) 시작 3주 후 ctDNA 조기 소실이 치료 반응을 예측한 것은 triple-negative breast cancer (TNBC) 아형에서였습니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-008",
+      "answer": "OA에서 ssGSEA와 머신러닝 기반 다중오믹스 분석을 통해 도출된 핵심 미토콘드리아 관련 유전자는 5개입니다. 이 유전자는 다음과 같습니다:\n\n1. CTSH\n2. ephrin-B2\n3. YIPF2\n4. ZNF671\n5. SLC27A6",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-009",
+      "answer": "이 논문 초록을 바탕으로 ssGSEA로 확인된 주요 면역세포는 다음과 같습니다:\n\n1. T cells\n2. B cells\n\n이러한 면역세포들이 치주염과 IgA 신병증 사이의 연관성에 대해 중요한 역할을 하는 것을 ssGSEA 분석 결과에서 확인하였습니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-010",
+      "answer": "파킨슨병(PD)과 원발성 쇼그렌 증후군(pSS)을 연결하는 미토콘드리아 관련 핵심 신호경로는 STING(인자인산효소가치상승) 경로로 확인되었습니다. 이는 LSG(가슴 주변 미토콘드리아 조직)에서 pSS 환자들에게서 ROS(산소자극성물질), 세포衰老 표식인 p53, 및 염증 표식인 CD45 및 Bcl-2가 분포되어 있다는 것을 발견했습니다. 이 연구는 WGCNA(Weighted Gene Co-expression Network Analysis)를 통해 STING 경로가 미토콘드리아 관련 경로 중에서 가장 주요한 경로로 확인되었습니다. 이 연구는 PD와 pSS의 임상적 중요성과 관련성을 확인했습니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-011",
+      "answer": "GloNetDRP는 기존 dual-layer network 방식과 비교하여 다음의 점을 개선했다:\n\n1. **네트워크 구조**: GloNetDRP는 두 개의 네트워크를 결합하여 사용한다. 첫 번째는 기존의 dual-layer network와 유사한 구조를 사용하지만, 두 번째는 기존의 dual-layer network가 고려하지 않았던 다른 약과 세포주까지 고려한다. 이는 기존의 dual-layer network가 query drug와 query cell line의 주변 노드만 고려하는 것에 비해, 더 넓은 범위의 노드를 고려함으로써 약물-세포주 관계의 다양성을 고려한다.\n\n2. **네트워크 내부의 노드 관계**: GloNetDRP는 두 개의 네트워크를 통해 약물-세포주 관계의 다양성을 고려한다. 이는 기존의 dual-layer network가 query drug와 query cell line의 주변 노드만 고려하는 것에 비해, 더 넓은 범위의 노드를 고려함으로써 약물-세포주 관계의 다양성을 고려한다.\n\n따라서, GloNetDRP는 기존의 dual-layer network 방식과 비교하여 더 넓은 �",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-012",
+      "answer": "CENPW 유전자를 억제한 기능적 변화는 다음과 같습니다:\n\n1. KIRC 세포의 증식, 이동, 이식 및 인 Vivo 종양 성장이 억제됨.\n2. PD-L1과 E-cadherin의 발현이 증가함. 이는 CENPW가 면역 반응 및 epithelial-mesenchymal transition을 조절한다는 것을 시사한다.\n\n따라서 CENPW의 억제는 신세포암(KIRC) 세포의 생장 및 이동성을 억제하며, 면역 반응과 세포 이동성에 영향을 미치는 것으로 나타났습니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-013",
+      "answer": "(PMID: 40851062) Title: The immune signatures predict gastric/gastroesophageal junction cancer response to first-line anti-PD-1 blockade or chemotherapy.\n\nAbstract: ORIENT-16 is a randomized, double-blind, placebo-controlled, phase 3 clinical trial that enrolled 650 patients with unresectable locally advanced or metastatic G/GEJ cancer. For patients enrolled from the First Affiliated Hospital of Zhejiang University School of Medicine, we analyzed progression-free survival (PFS) and overall survival (OS) based on PD-L1 expression and landmark analysis. For patients with PD-L1 combined positive score (CPS) <10, survival disparities between anti-PD-1 immunotherapy and chemotherapy emerged 300 days post-treatment.\n\n따라서, PD-L1 CPS 10 미만 환자군의 항PD-1 면역치료 대 화학요법 생존 곡선은 300일 후부터 벌어지기 시작했습니다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-014",
+      "answer": "주어진 논문 초록들에선 PREDICT 임상시험에서 말초혈액단핵구(PBMC) 기반으로 췌장암 2차 치료 결과(TTF2)를 예측하기 위해 개발된 모델의 이름과 특징 수에 대한 정보가 제공되지 않았습니다. 주어진 논문들은 주로 폐암에 대한 연구를 다루고 있습니다. 따라서 이 질문에 대한 정확한 답변은 제공할 수 없습니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    }
+  ],
+  "dpo_results": [
+    {
+      "id": "q-001",
+      "answer": "이 내용에 따르면 직접적으로 확인 가능한 정보는 포함되어 있지 않습니다. 하지만 이 내용에서 중요한 내용은 다음과 같습니다:\n\n1. TTF-1 부정의 경우, 부정형 환자들은 EGFR-TKIs에 대한 부정형 환자들에 비해 전체 반응률 (ORR), 기전 효과 확인률 (DCR), 중간 기간 부정확 생존율 (PFS)이 더 나쁩니다.\n\n2. 유전적 메커니즘에 따르면 PIK3C2G, STK11, EPAS1 및 BTG2의 변이가 유전적 저항에 관련이 있습니다.\n\n이러한 내용들을 종합적으로 보면, 이론적으로는 TME에서 TTF-1 부정이 유전적 저항에 기여하는 핵심 세포가 있을 수 있습니다. 하지만 이 내용은 직접적으로 확인 가능한 내용이 아니며, 직접적인 증거가 없으므로 확인 불가합니다.",
+      "is_refusal": true,
+      "has_citation": null,
+      "guard_would_block": false,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-002",
+      "answer": "관련 내용이 포함되어 있지 않아 확인이 불가합니다.",
+      "is_refusal": true,
+      "has_citation": null,
+      "guard_would_block": false,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-003",
+      "answer": "이 내용에 따르면 직접적인 답변이 포함되어 있지 않아 직접적인 내용을 기반으로 답변을 제공하는 것은 어려울 것 같습니다. 하지만 이 내용에 따르면 다음과 같은 내용이 포함되어 있습니다:\n\n1. EGFR 변이 NSCLC가 소세포폐암(SCLC)로 형질전환되는 데 걸리는 중앙값 시간은 17.8 개월입니다.\n\n2. 형질전환 이후에 자주 동반되는 유전자 변이로는 RB1, TP53 및 PIK3CA가 언급되어 있습니다.\n\n따라서 답변은 다음과 같이 작성할 수 있습니다:\n\n- EGFR 변이 NSCLC가 소세포폐암(SCLC)으로 형질전환되는 데 걸리는 중앙값 시간은 17.8 개월입니다.\n- 형질전환 이후에 자주 동반되는 유전자 변이로는 RB1, TP53 및 PIK3CA가 언급되어 있습니다.\n\n이 내용은 직접적으로 확인 가능한 내용이지만, 직접 초록에서 확인 가능한 내용이 포함되어 있지 않아 직접적인 내용을 기반으로 답변을 제공하는 것이 어려울 뿐더러, 추가적인 내용이 포함되어 있지 않아 직접 초록 내용에 기반한 정확한 내용을 제공하는 것이 어려울 수 있습니다.",
+      "is_refusal": true,
+      "has_citation": null,
+      "guard_would_block": false,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-004",
+      "answer": "(PMID: 37991778)에 따르면, NeoPACT Phase 2 임상시험에서 carboplatin (카보플라틴)과 docetaxel (도제타시르)에 pembrolizumab (페모리즈무)을 추가한 선행요법으로 진행된 경우의 병리학적 완전관해율 (pCR)은 58% (95% 신뢰구간: 48%-67%)이었습니다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-005",
+      "answer": "이 내용에서 직접적으로 확인이 불가한 내용입니다. 하지만 해당 내용에서 중요한 내용은 다음과 같습니다:\n\n1. 이론적으로는 면역관문억제제(I)C(B)에 대한 반응을 예측하는 공간적 종양미세환경 특징에 대한 연구가 진행되고 있습니다. 이에 따라 이론적으로는 이러한 특징이 중요하다는 내용이 포함되어 있습니다.\n\n2. 하지만 직접적으로 확인이 불가한 내용으로는 다음과 같은 내용이 포함되어 있습니다:\n   - 이론적으로는 면역관문억제제(I)C(B)에 대한 반응을 예측하는 공간적 종양미세환경 특징에 대한 연구가 진행되고 있습니다.\n   - 이에 따라 이론적으로는 이러한 특징이 중요하다는 내용이 포함되어 있습니다.\n\n따라서 직접적으로 확인이 불가하지만 이론적으로는 면역관문억제제(I)C(B)에 대한 반응을 예측하는 공간적 종양미세환경 특징에 대한 연구가 진행되고 있다는 내용이 포함되어 있습니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-006",
+      "answer": "이 내용에 따르면, 종양 내 미생물총의 다양성과 부하량은 선행 항암화학면역요법(Chemo-IM)에 대한 병리학적 완전관해(pCR) 여부와 다음과 같은 관계를 보였습니다:\n\n1. **pCR 그룹과 비-pCR 그룹의 미생물 다양성 차이**: pCR 그룹의 미생물 다양성은 비-pCR 그룹보다 높았습니다.\n\n2. **미생물 구성의 차이**: 비-pCR 그룹에서는 gram-negative细菌（如Klebsiella, Escherichia, Acinetobacter, Vibrio, Meiothermus）의 비율이 높았습니다. 반면 pCR 그룹에서는 이러한 미생물의 비율이 낮았습니다. 특히 Calidithermus chliarophilus, Meiothermus sp.003226535, Escherichia coli가 두 그룹을 구분짓는 주요 미생물로 확인되었습니다.\n\n3. **기능적 분석**: 기능적 분석 결과에 따르면, 비-pCR 그룹과 pCR 그룹 사이에 3,207개의 다중 유기체 기능적 콘텐츠(COGs)와 230개",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-007",
+      "answer": "이 내용은 직접 초록에서 확인이 불가능합니다. 하지만 내용에 따르면 확인이 불가능한 내용이 포함되어 있습니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-008",
+      "answer": "관련 내용에 포함되어 있지 않아 확인이 불가합니다.",
+      "is_refusal": true,
+      "has_citation": null,
+      "guard_would_block": true,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-009",
+      "answer": "이 내용에 따르면, ssGSEA로 확인된 주요 면역세포는 다음과 같습니다:\n\n1. T cells\n2. B cells",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-010",
+      "answer": "본 초록에 포함된 내용에 따르면 미토콘드리아 관련 핵심 신호경로가 확인되었다는 내용은 포함되어 있지 않습니다.",
+      "is_refusal": true,
+      "has_citation": null,
+      "guard_would_block": true,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-011",
+      "answer": "GloNetDRP는 기존의 dual-layer network 방식과 비교하여 다음의 점을 개선했다:\n\n1. **네트워크 구조**: 기존의 dual-layer network는 한 개의 층에서만 drug-cell line 관계를 고려하였으나, GloNetDRP는 두 개의 층에서 drug-cell line 관계를 고려한다. 이는 한 개의 층에서만 처리하던 정보를 두 개의 층에서 처리함으로써 정보의 다양성을 높인다.\n\n2. **네트워크 내에서의 정보 활용**: 기존의 dual-layer network는 한 층에서만 처리하던 정보를 한 층에서만 활용하였으나, GloNetDRP는 두 층에서 처리하던 정보를 활용한다. 이는 한 층에서만 처리하던 정보가 다른 층에서도 유용한 정보가 될 수 있다는 것을 의미한다.\n\n따라서, GloNetDRP는 기존의 dual-layer network 방식보다 더 다양한 정보를 활용하여 약물-세포주 관계를 예측하는 것이 가능하다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-012",
+      "answer": "CENPW 유전자의 억제가 신세포암(KIRC)에서 확인된 기능적 변화는 다음과 같습니다:\n\n1. KIRC 세포의 증식 억제\n2. KIRC 세포의 이동성 및 이식성 억제\n3. KIRC 세포의 종양 형성 억제\n\n이러한 기능적 변화는 다음과 같이 동일한 기능에 따라 분류됩니다:\n\n- 세포 생장 및 분열 관련 기능: 증식 억제\n- 세포 이동 및 이식 관련 기능: 이동성 및 이식성 억제\n- 종양 형성 관련 기능: 종양 형성 억제\n\n이러한 기능적 변화는 CENPW의 기능에 대한 직접적인 증거로 해석될 수 있습니다.",
+      "is_refusal": false,
+      "has_citation": false,
+      "guard_would_block": false,
+      "self_refusal_correct": true
+    },
+    {
+      "id": "q-013",
+      "answer": "(PMID: 40851062)에서 제공된 내용에 따르면, ORIENT-16 임상시험에서 PD-L1 CPS가 10 미만인 환자군의 항PD-1 면역치료 대 화학요법에 대한 생존 곡선에서 벌어지는 차이가 확인되었습니다. 이 내용에 따르면 이 생존 곡선의 차이가 확인된 시기는 항PD-1 면역치료와 화학요법 사이에서 PD-L1 CPS가 10 미만인 환자군에서 300일 후(post-treatment 300일 후)에 시작되었다는 점을 알 수 있습니다.",
+      "is_refusal": false,
+      "has_citation": true,
+      "guard_would_block": true,
+      "self_refusal_correct": false
+    },
+    {
+      "id": "q-014",
+      "answer": "관련 내용이 포함되어 있지 않아 확인이 불가합니다.",
+      "is_refusal": true,
+      "has_citation": null,
+      "guard_would_block": true,
+      "self_refusal_correct": true
+    }
+  ]
+}

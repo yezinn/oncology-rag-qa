@@ -29,8 +29,18 @@ preference pair를 작성하는 대신 두 가지 시나리오로 프로그램�
     (build_index.py로 만든 ./chroma_db가 있어야 함)
 
 사용법:
-    python3 build_preference_data.py
+    python3 build_preference_data.py                        # 두 시나리오 모두 실행
+    python3 build_preference_data.py --scenario grounded
+    python3 build_preference_data.py --scenario weak_evidence
+
+주의(무료 티어 quota): Gemini 무료 티어는 하루 요청 수가 제한(모델당 500회)됩니다.
+grounded 시나리오만 해도 시도 300개 * (질문 1회 + 통과 시 답변 2회)로 500회에
+근접/초과할 수 있습니다. quota 초과 에러가 뜨면 나머지 호출도 전부 실패할 게
+뻔하므로 스크립트가 즉시 중단하고 그때까지 모은 pair를 저장합니다. --scenario로
+시나리오를 나눠서 날짜를 나눠 실행하세요. 기존 preference_data.jsonl은 지우지 않고
+"이번에 실행한 시나리오"만 교체해서 병합합니다.
 """
+import argparse
 import json
 import os
 import random
@@ -209,11 +219,29 @@ def make_forced_answer_ignoring_guard(question, results, gen_llm):
     return extract_text(response)
 
 
-def main():
-    if not (os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")):
-        print("GOOGLE_API_KEY가 설정되어 있지 않습니다. export GOOGLE_API_KEY=... 후 다시 실행하세요.")
-        return
+class QuotaExceeded(Exception):
+    """Gemini API 일일/분당 quota 초과 (429). 재시도해도 소용없으므로 즉시 중단시키기 위한 예외."""
 
+
+def is_quota_error(e):
+    msg = str(e)
+    return "RESOURCE_EXHAUSTED" in msg or "429" in msg or "quota" in msg.lower()
+
+
+def load_existing_pairs(path):
+    if not os.path.exists(path):
+        return []
+    with open(path, "r", encoding="utf-8") as f:
+        return [json.loads(line) for line in f if line.strip()]
+
+
+def save_pairs(path, pairs):
+    with open(path, "w", encoding="utf-8") as f:
+        for pair in pairs:
+            f.write(json.dumps(pair, ensure_ascii=False) + "\n")
+
+
+def run_grounded_scenario(vectorstore, question_llm, gen_llm):
     abstracts = load_json(ABSTRACTS_PATH)
     golden_set = load_json(GOLDEN_SET_PATH)
     golden_pmids = set()
@@ -225,14 +253,8 @@ def main():
     random.shuffle(eligible_abstracts)
     sampled_abstracts = eligible_abstracts[:N_GROUNDED_TARGET]
 
-    vectorstore = get_vectorstore()
-    question_llm = build_question_llm()
-    gen_llm = ChatGoogleGenerativeAI(model=GEN_MODEL, temperature=0)
-
     pairs = []
-
-    # --- 1) 근거 충분 시나리오 ---
-    print(f"[1/2] 근거 충분 시나리오: {len(sampled_abstracts)}개 초록에서 질문 생성 중...")
+    print(f"[근거 충분 시나리오] {len(sampled_abstracts)}개 초록에서 질문 생성 중...")
     for i, abstract in enumerate(sampled_abstracts):
         try:
             question = generate_question_from_abstract(abstract, question_llm)
@@ -257,11 +279,17 @@ def main():
                 "source_pmid": abstract["pmid"],
             })
             print(f"  [{i}] OK: {question[:40]}...")
-        except Exception as e:  # noqa: BLE001 - 개별 실패는 스킵하고 계속 진행
+        except Exception as e:  # noqa: BLE001
+            if is_quota_error(e):
+                print(f"  [{i}] quota 초과로 중단: {e}")
+                raise QuotaExceeded(str(e)) from e
             print(f"  [{i}] 실패, 스킵: {e}")
+    return pairs
 
-    # --- 2) 근거 불충분 시나리오 ---
-    print(f"\n[2/2] 근거 불충분 시나리오: {len(WEAK_EVIDENCE_TOPICS)}개 주제에서 질문 생성 중...")
+
+def run_weak_evidence_scenario(vectorstore, question_llm, gen_llm):
+    pairs = []
+    print(f"[근거 불충분 시나리오] {len(WEAK_EVIDENCE_TOPICS)}개 주제에서 질문 생성 중...")
     for i, topic in enumerate(WEAK_EVIDENCE_TOPICS):
         try:
             question = generate_weak_evidence_question(topic, question_llm)
@@ -287,16 +315,56 @@ def main():
             score_str = f"{top1:.3f}" if top1 is not None else "None"
             print(f"  [{i}] OK (score={score_str}): {question[:40]}...")
         except Exception as e:  # noqa: BLE001
+            if is_quota_error(e):
+                print(f"  [{i}] quota 초과로 중단: {e}")
+                raise QuotaExceeded(str(e)) from e
             print(f"  [{i}] 실패, 스킵: {e}")
+    return pairs
 
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        for pair in pairs:
-            f.write(json.dumps(pair, ensure_ascii=False) + "\n")
 
-    n_grounded = sum(1 for p in pairs if p["scenario"] == "grounded")
-    n_weak = sum(1 for p in pairs if p["scenario"] == "weak_evidence")
-    print(f"\n완료: 총 {len(pairs)}개 preference pair 생성 (근거 충분 {n_grounded}개, 근거 불충분 {n_weak}개)")
-    print(f"-> {OUTPUT_PATH}")
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--scenario", choices=["grounded", "weak_evidence", "both"], default="both",
+        help="실행할 시나리오. 무료 티어 quota 제한 때문에 나눠서 실행할 때 사용 (기본: both)",
+    )
+    args = parser.parse_args()
+
+    if not (os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")):
+        print("GOOGLE_API_KEY가 설정되어 있지 않습니다. export GOOGLE_API_KEY=... 후 다시 실행하세요.")
+        return
+
+    vectorstore = get_vectorstore()
+    question_llm = build_question_llm()
+    gen_llm = ChatGoogleGenerativeAI(model=GEN_MODEL, temperature=0)
+
+    # 기존 결과 로드 -- 이번에 실행하지 않는 시나리오의 pair는 그대로 보존
+    existing = load_existing_pairs(OUTPUT_PATH)
+    run_grounded = args.scenario in ("grounded", "both")
+    run_weak = args.scenario in ("weak_evidence", "both")
+
+    kept = [p for p in existing if not (
+        (run_grounded and p["scenario"] == "grounded")
+        or (run_weak and p["scenario"] == "weak_evidence")
+    )]
+    new_pairs = []
+
+    try:
+        if run_grounded:
+            new_pairs += run_grounded_scenario(vectorstore, question_llm, gen_llm)
+        if run_weak:
+            new_pairs += run_weak_evidence_scenario(vectorstore, question_llm, gen_llm)
+    except QuotaExceeded:
+        print("\n*** Gemini API quota 초과로 중단했습니다. 그때까지 모은 결과는 저장합니다. ***")
+        print("*** quota가 리셋된 후 동일한 --scenario로 다시 실행하면 이어서 채울 수 있습니다. ***")
+    finally:
+        all_pairs = kept + new_pairs
+        save_pairs(OUTPUT_PATH, all_pairs)
+
+        n_grounded = sum(1 for p in all_pairs if p["scenario"] == "grounded")
+        n_weak = sum(1 for p in all_pairs if p["scenario"] == "weak_evidence")
+        print(f"\n현재 {OUTPUT_PATH} 총 {len(all_pairs)}개 (근거 충분 {n_grounded}개, 근거 불충분 {n_weak}개)")
+        print(f"-> {OUTPUT_PATH}")
 
 
 if __name__ == "__main__":

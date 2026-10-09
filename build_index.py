@@ -11,6 +11,15 @@ sentence-transformers를 사용하므로 임베딩 자체에는 API 비용이 �
 주의: SCORE_THRESHOLD 관련 버그(negative relevance score)를 고치면서 임베딩
 정규화 방식이 바뀌었습니다. 이전에 만든 ./chroma_db가 있다면 삭제하고
 다시 실행해야 새 설정으로 인덱스가 재구축됩니다.
+
+2026-10-08 임베딩 모델 교체: all-MiniLM-L6-v2(영어 전용) -> paraphrase-multilingual-MiniLM-L12-v2
+(다국어). 원인: golden set 질문이 한국어인데 영어 전용 모델을 쓰다 보니, 정답 문서의
+제목/초록 내용이 질문과 명백히 일치해도 dense 검색이 아예 못 찾는 cross-lingual
+불일치가 실측으로 확인됨(같은 질문을 영어로 번역만 해도 순위가 top-50 밖 -> 1위로
+뛰어오름 — 코퍼스나 로직 문제가 아니라 임베딩 모델의 언어 한계였음). 이 모델 교체는
+**반드시 ./chroma_db를 삭제하고 재실행**해야 함 — 차원은 둘 다 384로 같지만 벡터
+공간 자체가 다른 모델이라 기존 인덱스와 호환 안 됨. 재실행 후 qa_chain.py의
+SCORE_THRESHOLD도 check_scores.py로 반드시 재튜닝해야 함(점수 분포가 달라짐).
 """
 import json
 from langchain_community.vectorstores import Chroma
@@ -19,7 +28,10 @@ from langchain_core.documents import Document
 
 DATA_PATH = "data/abstracts.json"
 PERSIST_DIR = "./chroma_db"
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+# 다국어(한국어 포함) 지원 모델 — all-MiniLM-L6-v2와 동일한 384차원 출력이라
+# 나머지 파이프라인(Chroma cosine space 설정 등)은 그대로 호환됨. E5 계열과 달리
+# "query: "/"passage: " 프리픽스가 필요 없어 코드 변경이 최소화됨.
+EMBEDDING_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
 
 def load_documents():
