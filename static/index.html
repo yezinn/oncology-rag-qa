@@ -50,11 +50,21 @@
   .badge.grounded { background: #dcfce7; color: #166534; }
   .badge.blocked { background: #fee2e2; color: #991b1b; }
   .answer {
-    white-space: pre-wrap;
     padding: 14px;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     background: #fafafa;
+  }
+  .answer p { margin: 0 0 10px; }
+  .answer p:last-child { margin-bottom: 0; }
+  .answer ul { margin: 0 0 10px; padding-left: 20px; }
+  .answer ul:last-child { margin-bottom: 0; }
+  .answer li { margin-bottom: 4px; }
+  .answer code {
+    background: #eef2f7;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.9em;
   }
   .meta { color: #666; font-size: 0.85rem; margin-top: 10px; }
   .sources { margin-top: 10px; }
@@ -116,6 +126,59 @@ async function ask() {
   }
 }
 
+// 아주 가벼운 마크다운 -> HTML 변환기.
+// Gemini 답변에 흔히 나오는 문법(굵게, 목록, 줄바꿈)만 지원.
+// XSS 방지를 위해 먼저 HTML 특수문자를 이스케이프한 뒤 마크다운을 적용한다.
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function renderMarkdown(text) {
+  if (!text) return '';
+  const escaped = escapeHtml(text);
+  const lines = escaped.split('\n');
+  let html = '';
+  let inList = false;
+
+  const inlineFormat = (line) => {
+    return line
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>');
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    const listMatch = line.match(/^[-*]\s+(.*)$/);
+
+    if (listMatch) {
+      if (!inList) {
+        html += '<ul>';
+        inList = true;
+      }
+      html += `<li>${inlineFormat(listMatch[1])}</li>`;
+      continue;
+    }
+
+    if (inList) {
+      html += '</ul>';
+      inList = false;
+    }
+
+    if (line === '') {
+      html += '<br>';
+    } else {
+      html += `<p>${inlineFormat(line)}</p>`;
+    }
+  }
+
+  if (inList) html += '</ul>';
+  return html;
+}
+
 function renderResult(data) {
   const badge = document.getElementById('badge');
   const answerEl = document.getElementById('answer');
@@ -130,7 +193,7 @@ function renderResult(data) {
     badge.className = 'badge blocked';
   }
 
-  answerEl.textContent = data.answer;
+  answerEl.innerHTML = renderMarkdown(data.answer);
 
   const scoreText = data.top1_score !== null
     ? data.top1_score.toFixed(4)
