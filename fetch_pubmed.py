@@ -2,6 +2,10 @@
 PubMed 초록 수집 스크립트
 EGFR 변이 폐선암, TNBC 항암화학요법 반응, ssGSEA 등 연구 도메인 관련 논문 초록을 수집한다.
 
+2026-10-09: 수집할 주제(QUERIES)는 topics_config.py의 TOPICS에서 가져온다 —
+주제를 바꾸거나 추가하려면 이 파일이 아니라 topics_config.py를 고치면 된다
+(qa_chain.py의 Corrective RAG 스코프 게이트도 같은 곳을 보므로 둘이 어긋나지 않음).
+
 사전 준비:
     pip install biopython --break-system-packages
     export ENTREZ_EMAIL="your_email@example.com"
@@ -13,15 +17,11 @@ import os
 import json
 import time
 from Bio import Entrez
+from topics_config import TOPICS
 
 Entrez.email = os.environ.get("ENTREZ_EMAIL", "your_email@example.com")
 
-QUERIES = {
-    "egfr_luad_prognosis": "EGFR mutation lung adenocarcinoma prognosis biomarker",
-    "tnbc_chemo_response": "triple negative breast cancer neoadjuvant chemotherapy response prediction",
-    "ssgsea_pathway": "ssGSEA pathway enrichment gene expression",
-    "transfer_learning_drug_response": "transfer learning cell line patient drug response prediction",
-}
+QUERIES = TOPICS
 
 MAX_RESULTS_PER_QUERY = 150
 

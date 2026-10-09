@@ -1,17 +1,24 @@
 """
 RAG 기반 QA 체인.
 검색된 근거(초록)의 유사도가 임계값보다 낮으면 LLM을 호출하지 않고 즉시
-"확인 불가"로 응답하는 Grounding Guard를 코드 레벨에서 강제한다.
+"확인 불가"로 응답하는 Grounding Guard를 코드 레벨에서 강제한다. Guard가
+1차로 차단해도, 질문이 우리가 다루는 도메인(CORRECTIVE_TOPICS)에 속한다고
+판단되면 1회 한정으로 실시간 PubMed 재검색을 시도하는 Corrective RAG 단계가
+있다(corrective_pubmed_retry() 참고) — 정적 코퍼스(598건)에 없을 뿐 실제로는
+답할 수 있는 질문을 구제하기 위함.
 
 사전 준비:
-    pip install langchain-google-genai --break-system-packages
+    pip install langchain-google-genai biopython --break-system-packages
     export GOOGLE_API_KEY="..."
+    export ENTREZ_EMAIL="..."
 
 사용법:
     python qa_chain.py
 """
 import os
 import re
+from Bio import Entrez
+from topics_config import TOPICS
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.retrievers import BM25Retriever
@@ -66,6 +73,30 @@ RERANK_CANDIDATE_K = 15
 # reranker score로 교체한다. 0.5는 그 큰 마진 사이 어디든 잡아도 안전하지만,
 # 임의로 중간값을 쓰기보다 실측값에 안전 마진을 둔 값.
 RERANK_THRESHOLD = 0.5
+
+# 우선순위 3 (Corrective RAG, 2026-10-09). Guard가 차단했을 때 바로 "근거 부족"을
+# 반환하는 대신, 1회 한정으로 실시간 PubMed 검색을 시도한다(fetch_pubmed.py의
+# Entrez 자산 재사용).
+#
+# 주의: 이건 RERANK_THRESHOLD(관련성 — "이 문서가 질문과 관련 있는가")와는
+# 완전히 다른 축의 판단이 하나 더 필요하다. 재검색을 허용할지를 관련성 점수로만
+# 판단하면 안 됨 — PubMed 전체에는 당뇨병 인슐린 저항성에 관한 "진짜로 관련
+# 있는" 논문이 실제로 존재하고, reranker는 그 논문을 찾으면 당연히 높은 점수를
+# 줄 것이기 때문. 즉 관련성만 보면 §6에서 막은 "그럴듯한 오답"이 재검색을 통해
+# 뒷문으로 다시 통과해버림. 그래서 재검색 자체를 허용할지는 "이 질문이 우리가
+# 다루기로 선언한 도메인(암 유전체)에 속하는가"라는 별도의 스코프 게이트로
+# 판단해야 한다(classify_scope() 참고) — fetch_pubmed.py가 코퍼스를 수집할 때
+# 썼던 주제 쿼리를 "우리 도메인의 정의"로 그대로 재사용.
+#
+# 2026-10-09: 주제 목록 자체는 topics_config.py의 TOPICS 하나로 모아뒀다 —
+# fetch_pubmed.py(코퍼스 수집)와 여기(스코프 게이트)가 서로 다른 목록을 보면
+# "코퍼스에는 있는데 스코프 게이트는 막는다"거나 그 반대의 불일치가 생기기
+# 때문. 다루는 주제를 바꾸고 싶으면 이 파일이 아니라 topics_config.py를 고치면
+# 된다(그 파일 docstring에 전체 절차 설명).
+ENTREZ_EMAIL = os.environ.get("ENTREZ_EMAIL", "")
+CORRECTIVE_TOPICS = TOPICS
+# NCBI E-utilities rate limit(API 키 없이는 초당 3회)을 고려해 재검색 1회당 적게 가져옴.
+CORRECTIVE_MAX_RESULTS = 5
 
 # 무료 티어(Google AI Studio) 모델. gemini-2.5-flash-lite는 신규 사용자에게 더 이상
 # 제공되지 않아(2026-08 기준) gemini-3.5-flash-lite로 교체함. 모델명이 또 바뀌었다면
@@ -172,6 +203,95 @@ def rerank_top1_score(cross_encoder, vectorstore, question, candidate_k=RERANK_C
     return max(scores)
 
 
+def classify_scope(question, llm):
+    """질문이 CORRECTIVE_TOPICS 중 하나에 명확히 속하는지 LLM으로 판단하고,
+    속한다면 실시간 PubMed 검색에 쓸 영어 쿼리를 함께 생성한다.
+
+    주의: 이건 "문서가 질문과 관련 있는가"(rerank_top1_score, 관련성)와는 다른
+    질문이다 — "이 질문이 애초에 우리가 다루기로 선언한 도메인에 속하는가"
+    (스코프)를 본다. 이 둘을 섞으면 안 되는 이유는 CORRECTIVE_TOPICS 상단 주석
+    참고. 실패(API 오류 등)하면 안전한 쪽으로 fallback(in_scope=False, 재검색 없음).
+    """
+    from pydantic import BaseModel, Field
+
+    class ScopeResult(BaseModel):
+        in_scope: bool = Field(description="질문이 아래 4개 주제 중 하나에 명확히 속하는가")
+        topic: str = Field(description="속한다면 topic key, 아니면 빈 문자열")
+        pubmed_query: str = Field(description="속한다면 PubMed 검색에 쓸 영어 키워드 쿼리(5~8단어), 아니면 빈 문자열")
+
+    topics_desc = "\n".join(f"- {k}: {v}" for k, v in CORRECTIVE_TOPICS.items())
+    prompt = f"""다음 4개 연구 주제 중 하나에 명확히 속하는 질문인지 판단하세요.
+애매하거나 다른 생물의학 주제(예: 당뇨병, 심장질환 등 암 유전체와 무관한 주제)라면
+반드시 in_scope=False로 답하세요. 비의학적 주제도 당연히 in_scope=False입니다.
+
+[주제 목록]
+{topics_desc}
+
+[질문]
+{question}
+"""
+    try:
+        structured_llm = llm.with_structured_output(ScopeResult)
+        result = structured_llm.invoke(prompt)
+        return result.in_scope, result.topic, result.pubmed_query
+    except Exception:  # noqa: BLE001 - 분류 실패 시 안전하게 재검색 없이 차단
+        return False, "", ""
+
+
+def corrective_pubmed_retry(question, llm, cross_encoder, top_n=TOP_K):
+    """Guard가 1차로 차단했을 때 1회 한정으로 시도하는 Corrective RAG 재검색.
+
+    classify_scope()가 "우리 도메인에 속한다"고 판단한 경우에만 실시간 PubMed
+    검색을 수행하고(fetch_pubmed.py의 Entrez 패턴 재사용), 가져온 문서도
+    rerank_top1_score()와 동일한 RERANK_THRESHOLD로 다시 검증한다 — 스코프 게이트와
+    관련성 검증을 모두 통과해야만 컨텍스트로 쓴다. 코퍼스에 영구히 추가하지는
+    않는다(이번 질문에 한정된 임시 보강).
+    """
+    in_scope, topic, pubmed_query = classify_scope(question, llm)
+    if not in_scope or not pubmed_query:
+        return None
+
+    Entrez.email = ENTREZ_EMAIL or "unknown@example.com"
+    try:
+        handle = Entrez.esearch(db="pubmed", term=pubmed_query, retmax=CORRECTIVE_MAX_RESULTS, sort="relevance")
+        record = Entrez.read(handle)
+        handle.close()
+        pmids = record.get("IdList", [])
+        if not pmids:
+            return None
+        handle = Entrez.efetch(db="pubmed", id=",".join(pmids), rettype="abstract", retmode="xml")
+        records = Entrez.read(handle)
+        handle.close()
+    except Exception:  # noqa: BLE001 - NCBI 호출 실패 시 재검색 없이 기존 차단으로 fallback
+        return None
+
+    from langchain_core.documents import Document
+
+    docs = []
+    for article in records.get("PubmedArticle", []):
+        try:
+            medline = article["MedlineCitation"]
+            pmid = str(medline["PMID"])
+            article_data = medline["Article"]
+            title = str(article_data.get("ArticleTitle", ""))
+            abstract_parts = article_data.get("Abstract", {}).get("AbstractText", [])
+            abstract = " ".join(str(p) for p in abstract_parts)
+            if abstract:
+                content = f"Title: {title}\n\nAbstract: {abstract}"
+                docs.append(Document(page_content=content, metadata={"pmid": pmid, "title": title, "topic": topic}))
+        except (KeyError, IndexError):
+            continue
+    if not docs:
+        return None
+
+    pairs = [(question, d.page_content) for d in docs]
+    scores = list(cross_encoder.score(pairs))
+    ranked = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
+    if ranked[0][1] < RERANK_THRESHOLD:
+        return None
+    return [d for d, _ in ranked[:top_n]]
+
+
 def extract_text(response):
     """langchain-google-genai 최신 버전은 response.content가 순수 문자열이 아니라
     [{"type": "text", "text": ..., "extras": {"signature": ...}}] 형태의 리스트로
@@ -227,10 +347,31 @@ def answer_question(question, llm, vectorstore, hybrid_retriever=None, cross_enc
         grounded_ok = bool(results) and results[0][1] >= SCORE_THRESHOLD
 
     if not grounded_ok:
+        # --- 우선순위 3, Corrective RAG: 1차 차단 시 1회 한정 실시간 재검색 ---
+        # cross_encoder가 있을 때만 시도(스코프 게이트·관련성 재검증 모두 reranker
+        # 기준이 필요하므로). CORRECTIVE_TOPICS 상단 주석 참고 — 관련성이 아니라
+        # 스코프(classify_scope)로 먼저 걸러야 당뇨병류 질문이 뒷문으로 통과하지 않음.
+        if cross_encoder is not None:
+            corrective_docs = corrective_pubmed_retry(question, llm, cross_encoder)
+            if corrective_docs:
+                context = format_context_docs(corrective_docs)
+                sources = [doc.metadata.get("pmid") for doc in corrective_docs]
+                chain = PROMPT | llm
+                response = chain.invoke({"context": context, "question": question})
+                return {
+                    "answer": extract_text(response),
+                    "sources": sources,
+                    "grounded": True,
+                    "corrective": True,
+                    "context": context,
+                }
+
         return {
             "answer": "관련 근거 논문을 찾을 수 없어 확인해드릴 수 없습니다.",
             "sources": [],
             "grounded": False,
+            "corrective": False,
+            "context": "",
         }
 
     if hybrid_retriever is not None:
@@ -250,6 +391,8 @@ def answer_question(question, llm, vectorstore, hybrid_retriever=None, cross_enc
         "answer": extract_text(response),
         "sources": sources,
         "grounded": True,
+        "corrective": False,
+        "context": context,
     }
 
 
@@ -261,14 +404,18 @@ def main():
     cross_encoder = get_cross_encoder()
 
     print("\n종료하려면 'exit' 입력")
-    print("(Grounding Guard 판단: reranker score 기준 / LLM 컨텍스트: BM25+Dense 하이브리드)\n")
+    print("(Grounding Guard 판단: reranker score 기준 / LLM 컨텍스트: BM25+Dense 하이브리드")
+    print(" / 1차 차단 시 스코프 게이트 통과하면 1회 한정 실시간 PubMed 재검색 시도)\n")
     while True:
         question = input("질문: ")
         if question.strip().lower() == "exit":
             break
         result = answer_question(question, llm, vectorstore, hybrid_retriever, cross_encoder)
         print("\n답변:", result["answer"])
-        print("출처 PMID:", result["sources"], "\n")
+        print("출처 PMID:", result["sources"])
+        if result.get("corrective"):
+            print("(실시간 PubMed 재검색으로 찾은 근거입니다 — 기존 정적 코퍼스에는 없던 문서)")
+        print()
 
 
 if __name__ == "__main__":

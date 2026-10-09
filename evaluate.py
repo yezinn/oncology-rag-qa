@@ -14,12 +14,18 @@ Golden Set 기반 평가 스크립트
    cross_encoder를 넘김). check_reranker_scores.py로 실측한 in-domain 최소
    0.9629 vs adversarial 최대 0.0709의 큰 마진 덕분에, 평가 경로의 Guard
    동작이 실제 qa_chain.py main()의 동작과 정확히 일치한다.
+   (2026-10-09 업데이트) Guard 1차 차단 시 qa_chain.py의 Corrective RAG
+   재검색(corrective_pubmed_retry)도 동일하게 거치므로, entry["corrective"]로
+   어떤 케이스가 실시간 PubMed 재검색을 통해 구제됐는지 결과에 기록한다.
+   judge에 넘기는 컨텍스트도 result["context"](실제 생성에 쓰인 근거)를 그대로
+   써서 corrective 케이스에서 컨텍스트가 어긋나지 않게 한다.
 
 사전 준비:
     golden_set_template.json을 복사해 golden_set.json으로 만들고, 본인 지식으로
     질문과 정답 PMID를 채워넣는다(최소 10~15개 권장).
     LLM-as-a-Judge까지 실행하려면: export GOOGLE_API_KEY="..."
     (Google AI Studio 발급: https://aistudio.google.com/apikey)
+    Corrective RAG 재검색까지 실행하려면: export ENTREZ_EMAIL="..."
 
 사용법:
     python evaluate.py
@@ -124,13 +130,15 @@ def main():
             result = answer_question(case["question"], gen_llm, vectorstore, hybrid_retriever, cross_encoder)
             entry["generated_answer"] = result["answer"]
             entry["grounded"] = result["grounded"]
+            entry["corrective"] = result.get("corrective", False)
             time.sleep(SLEEP_BETWEEN_CALLS_SEC)
 
             if result["grounded"]:
-                context = "\n\n".join(
-                    f"(PMID: {d.metadata.get('pmid')}) {d.page_content}" for d in docs
-                )
-                judge = judge_answer(case["question"], context, result["answer"], judge_llm)
+                # result["context"]는 answer_question()이 실제로 LLM에 넘긴 컨텍스트
+                # (하이브리드 검색 결과 또는 — corrective=True인 경우 — 실시간 PubMed
+                # 재검색 결과)다. 위 docs(하이브리드 Hit Rate 측정용)로 다시 만들면
+                # corrective 케이스에서 실제 생성에 쓰인 근거와 어긋나므로 그대로 쓴다.
+                judge = judge_answer(case["question"], result["context"], result["answer"], judge_llm)
                 time.sleep(SLEEP_BETWEEN_CALLS_SEC)
             else:
                 judge = {
